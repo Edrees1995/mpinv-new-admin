@@ -1,0 +1,53 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import {
+  Property,
+  PropertyImage,
+  PropertyAmenity,
+  PropertyFaq,
+  PropertyFloorPlan,
+  Project,
+  Developer,
+  Community,
+  SubCommunity,
+  Category,
+  Subcategory,
+  Amenity,
+  User,
+  ListingUser,
+  Article,
+  Setting,
+  Contact,
+  Banner,
+  Team,
+  Faq,
+} from '../entities';
+
+const entities = [
+  Property,
+  PropertyImage,
+  PropertyAmenity,
+  PropertyFaq,
+  PropertyFloorPlan,
+  Project,
+  Developer,
+  Community,
+  SubCommunity,
+  Category,
+  Subcategory,
+  Amenity,
+  User,
+  ListingUser,
+  Article,
+  Setting,
+  Contact,
+  Banner,
+  Team,
+  Faq,
+];
+
+@Module({
+  imports: [TypeOrmModule.forFeature(entities)],
+  exports: [TypeOrmModule],
+})
+export class DatabaseModule {}

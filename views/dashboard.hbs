@@ -5,8 +5,8 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-gray-500">Total Properties</p>
-                <p class="text-2xl font-bold text-gray-900 mt-1">1,234</p>
-                <p class="text-sm text-green-600 mt-1">+12% from last month</p>
+                <p class="text-2xl font-bold text-gray-900 mt-1">{{stats.properties}}</p>
+                <a href="/properties" class="text-sm text-blue-600 hover:underline mt-1">View all</a>
             </div>
             <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                 <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -16,13 +16,13 @@
         </div>
     </div>
 
-    <!-- Active Projects -->
+    <!-- Offplan Projects -->
     <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm font-medium text-gray-500">Active Projects</p>
-                <p class="text-2xl font-bold text-gray-900 mt-1">97</p>
-                <p class="text-sm text-green-600 mt-1">+5 new this week</p>
+                <p class="text-sm font-medium text-gray-500">Offplan Projects</p>
+                <p class="text-2xl font-bold text-gray-900 mt-1">{{stats.projects}}</p>
+                <a href="/projects" class="text-sm text-green-600 hover:underline mt-1">View all</a>
             </div>
             <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                 <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,79 +32,87 @@
         </div>
     </div>
 
-    <!-- Total Users -->
+    <!-- Developers -->
     <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm font-medium text-gray-500">Total Users</p>
-                <p class="text-2xl font-bold text-gray-900 mt-1">5,678</p>
-                <p class="text-sm text-green-600 mt-1">+234 new users</p>
+                <p class="text-sm font-medium text-gray-500">Developers</p>
+                <p class="text-2xl font-bold text-gray-900 mt-1">{{stats.developers}}</p>
+                <a href="/developers" class="text-sm text-purple-600 hover:underline mt-1">View all</a>
             </div>
             <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                 <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                 </svg>
             </div>
         </div>
     </div>
 
-    <!-- Revenue -->
+    <!-- Communities -->
     <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm font-medium text-gray-500">Total Revenue</p>
-                <p class="text-2xl font-bold text-gray-900 mt-1">AED 2.4M</p>
-                <p class="text-sm text-green-600 mt-1">+18% this quarter</p>
+                <p class="text-sm font-medium text-gray-500">Communities</p>
+                <p class="text-2xl font-bold text-gray-900 mt-1">{{stats.communities}}</p>
+                <a href="/communities" class="text-sm text-yellow-600 hover:underline mt-1">View all</a>
             </div>
             <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
                 <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 </svg>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Contact Inquiries Alert -->
+{{#if stats.unreadContacts}}
+<div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+    <div class="flex items-center">
+        <svg class="w-5 h-5 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+        </svg>
+        <p class="text-red-800">You have <strong>{{stats.unreadContacts}}</strong> unread contact inquiries. <a href="/contacts" class="underline font-medium">View now</a></p>
+    </div>
+</div>
+{{/if}}
+
 <!-- Recent Activity & Quick Actions -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- Recent Properties -->
     <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100">
         <div class="p-6 border-b border-gray-100">
-            <h3 class="text-lg font-semibold text-gray-900">Recent Properties</h3>
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900">Recent Properties</h3>
+                <a href="/properties" class="text-sm text-blue-600 hover:underline">View all</a>
+            </div>
         </div>
         <div class="p-6">
+            {{#if recentProperties.length}}
             <div class="space-y-4">
+                {{#each recentProperties}}
                 <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                     <div class="flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-gray-200 rounded-lg"></div>
+                        <div class="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden">
+                            {{#if this.featured_image}}
+                            <img src="{{this.featured_image}}" alt="{{this.title}}" class="w-full h-full object-cover">
+                            {{/if}}
+                        </div>
                         <div>
-                            <p class="font-medium text-gray-900">Luxury Villa in Yas Island</p>
-                            <p class="text-sm text-gray-500">Added 2 hours ago</p>
+                            <p class="font-medium text-gray-900">{{this.title}}</p>
+                            <p class="text-sm text-gray-500">{{this.community.name}}</p>
                         </div>
                     </div>
-                    <span class="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">Active</span>
+                    <span class="px-3 py-1 {{#if this.status}}bg-green-100 text-green-700{{else}}bg-yellow-100 text-yellow-700{{/if}} text-sm font-medium rounded-full">
+                        {{#if this.status}}Active{{else}}Inactive{{/if}}
+                    </span>
                 </div>
-                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-gray-200 rounded-lg"></div>
-                        <div>
-                            <p class="font-medium text-gray-900">Modern Apartment in Al Reem</p>
-                            <p class="text-sm text-gray-500">Added 5 hours ago</p>
-                        </div>
-                    </div>
-                    <span class="px-3 py-1 bg-yellow-100 text-yellow-700 text-sm font-medium rounded-full">Pending</span>
-                </div>
-                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-gray-200 rounded-lg"></div>
-                        <div>
-                            <p class="font-medium text-gray-900">Penthouse in Saadiyat</p>
-                            <p class="text-sm text-gray-500">Added 1 day ago</p>
-                        </div>
-                    </div>
-                    <span class="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">Active</span>
-                </div>
+                {{/each}}
             </div>
+            {{else}}
+            <p class="text-gray-500 text-center py-8">No properties found. Connect database to see data.</p>
+            {{/if}}
         </div>
     </div>
 
@@ -115,47 +123,118 @@
         </div>
         <div class="p-6">
             <div class="space-y-3">
-                <button class="w-full flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <a href="/properties/create" class="w-full flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
                     Add Property
-                </button>
-                <button class="w-full flex items-center justify-center px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                </a>
+                <a href="/projects/create" class="w-full flex items-center justify-center px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
                     Add Project
-                </button>
-                <button class="w-full flex items-center justify-center px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                </a>
+                <a href="/developers/create" class="w-full flex items-center justify-center px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
-                    Add User
-                </button>
-                <button class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                    Add Developer
+                </a>
+                <a href="/communities/create" class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
-                    View Reports
-                </button>
+                    Add Community
+                </a>
             </div>
         </div>
     </div>
 </div>
 
-<!-- HTMX Demo Section -->
-<div class="mt-8 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-    <h3 class="text-lg font-semibold text-gray-900 mb-4">HTMX Demo</h3>
-    <button
-        hx-get="/api/time"
-        hx-target="#time-display"
+<!-- Recent Projects -->
+<div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-100">
+    <div class="p-6 border-b border-gray-100">
+        <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-gray-900">Recent Offplan Projects</h3>
+            <a href="/projects" class="text-sm text-blue-600 hover:underline">View all</a>
+        </div>
+    </div>
+    <div class="p-6">
+        {{#if recentProjects.length}}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {{#each recentProjects}}
+            <div class="p-4 bg-gray-50 rounded-lg">
+                <div class="w-full h-32 bg-gray-200 rounded-lg mb-3 overflow-hidden">
+                    {{#if this.featured_image}}
+                    <img src="{{this.featured_image}}" alt="{{this.name}}" class="w-full h-full object-cover">
+                    {{/if}}
+                </div>
+                <h4 class="font-medium text-gray-900">{{this.name}}</h4>
+                <p class="text-sm text-gray-500">{{this.developer.name}}</p>
+                <p class="text-sm text-blue-600 font-medium mt-1">{{this.project_status}}</p>
+            </div>
+            {{/each}}
+        </div>
+        {{else}}
+        <p class="text-gray-500 text-center py-8">No projects found. Connect database to see data.</p>
+        {{/if}}
+    </div>
+</div>
+
+<!-- Recent Contacts -->
+<div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-100">
+    <div class="p-6 border-b border-gray-100">
+        <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-gray-900">Recent Contact Inquiries</h3>
+            <a href="/contacts" class="text-sm text-blue-600 hover:underline">View all</a>
+        </div>
+    </div>
+    <div class="p-6">
+        {{#if recentContacts.length}}
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="text-left text-sm text-gray-500 border-b">
+                        <th class="pb-3 font-medium">Name</th>
+                        <th class="pb-3 font-medium">Email</th>
+                        <th class="pb-3 font-medium">Subject</th>
+                        <th class="pb-3 font-medium">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm">
+                    {{#each recentContacts}}
+                    <tr class="border-b last:border-0">
+                        <td class="py-3 font-medium text-gray-900">{{this.name}}</td>
+                        <td class="py-3 text-gray-600">{{this.email}}</td>
+                        <td class="py-3 text-gray-600">{{this.subject}}</td>
+                        <td class="py-3">
+                            <span class="px-2 py-1 {{#if this.is_read}}bg-gray-100 text-gray-600{{else}}bg-red-100 text-red-700{{/if}} text-xs font-medium rounded-full">
+                                {{#if this.is_read}}Read{{else}}Unread{{/if}}
+                            </span>
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+        {{else}}
+        <p class="text-gray-500 text-center py-8">No contact inquiries found.</p>
+        {{/if}}
+    </div>
+</div>
+
+<!-- Database Status -->
+<div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Database Status</h3>
+    <div
+        hx-get="/api/stats"
+        hx-trigger="load"
+        hx-target="#db-status"
         hx-swap="innerHTML"
-        class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
     >
-        Get Server Time
-    </button>
-    <div id="time-display" class="mt-4 p-4 bg-gray-50 rounded-lg text-gray-600">
-        Click the button to fetch server time via HTMX
+        <div id="db-status" class="p-4 bg-gray-50 rounded-lg">
+            <p class="text-gray-600">Checking database connection...</p>
+        </div>
     </div>
 </div>
