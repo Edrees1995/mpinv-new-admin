@@ -3,10 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  ManyToOne,
-  JoinColumn,
 } from 'typeorm';
-import { Property } from './property.entity';
 
 @Entity('mw_ad_image')
 export class PropertyImage {
@@ -33,8 +30,4 @@ export class PropertyImage {
 
   @CreateDateColumn()
   created_at: Date;
-
-  @ManyToOne(() => Property, (property) => property.images)
-  @JoinColumn({ name: 'ad_id' })
-  property: Property;
 }

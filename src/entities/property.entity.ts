@@ -2,117 +2,84 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
-  OneToMany,
   JoinColumn,
 } from 'typeorm';
 import { Category } from './category.entity';
-import { Subcategory } from './subcategory.entity';
 import { Community } from './community.entity';
-import { SubCommunity } from './sub-community.entity';
-import { PropertyImage } from './property-image.entity';
-import { PropertyAmenity } from './property-amenity.entity';
-import { PropertyFaq } from './property-faq.entity';
-import { PropertyFloorPlan } from './property-floor-plan.entity';
 
 @Entity('mw_place_an_ad')
 export class Property {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 255, nullable: true })
+  @Column({ name: 'ad_title', length: 250 })
   title: string;
 
-  @Column({ length: 255, nullable: true })
+  @Column({ length: 250, nullable: true })
   slug: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'ad_description', type: 'text', nullable: true })
   description: string;
 
-  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true })
+  @Column({ name: 'ad_short_description', type: 'text', nullable: true })
+  short_description: string;
+
+  @Column({ type: 'decimal', precision: 14, scale: 2 })
   price: number;
 
-  @Column({ length: 50, nullable: true })
+  @Column({ name: 'listing_type', length: 1, nullable: true })
   purpose: string; // sale, rent
 
-  @Column({ length: 50, nullable: true })
-  property_type: string;
+  @Column({ nullable: true })
+  bedrooms: string;
 
   @Column({ nullable: true })
-  bedrooms: number;
-
-  @Column({ nullable: true })
-  bathrooms: number;
-
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
-  area: number;
-
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
-  builtup_area: number;
-
-  @Column({ length: 255, nullable: true })
-  address: string;
-
-  @Column({ length: 100, nullable: true })
-  city: string;
-
-  @Column({ type: 'decimal', precision: 10, scale: 8, nullable: true })
-  latitude: number;
-
-  @Column({ type: 'decimal', precision: 11, scale: 8, nullable: true })
-  longitude: number;
+  bathrooms: string;
 
   @Column({ nullable: true })
   category_id: number;
 
-  @Column({ nullable: true })
+  @Column({ name: 'sub_category_id', nullable: true })
   subcategory_id: number;
 
   @Column({ nullable: true })
-  community_id: number;
+  country: number;
 
   @Column({ nullable: true })
-  sub_community_id: number;
-
-  @Column({ length: 255, nullable: true })
-  featured_image: string;
-
-  @Column({ length: 50, nullable: true })
-  reference_no: string;
-
-  @Column({ type: 'tinyint', default: 1 })
-  status: number;
-
-  @Column({ type: 'tinyint', default: 0 })
-  featured: number;
-
-  @Column({ type: 'tinyint', default: 0 })
-  is_offplan: number;
-
-  @Column({ length: 255, nullable: true })
-  video_url: string;
-
-  @Column({ length: 255, nullable: true })
-  virtual_tour: string;
+  state: number;
 
   @Column({ nullable: true })
-  agent_id: number;
+  city: number;
 
-  @Column({ length: 255, nullable: true })
-  meta_title: string;
+  @Column({ nullable: true })
+  district: number;
 
-  @Column({ type: 'text', nullable: true })
-  meta_description: string;
+  @Column({ name: 'location_latitude', length: 150, nullable: true })
+  latitude: string;
 
-  @Column({ type: 'text', nullable: true })
-  meta_keywords: string;
+  @Column({ name: 'location_longitude', length: 150, nullable: true })
+  longitude: string;
 
-  @CreateDateColumn()
+  @Column({ name: 'mobile_number', length: 15, nullable: true })
+  phone: string;
+
+  @Column({ nullable: true })
+  user_id: number;
+
+  @Column({ type: 'enum', enum: ['A', 'I'], default: 'A' })
+  status: string;
+
+  @Column({ name: 'isTrash', type: 'enum', enum: ['0', '1'], default: '0' })
+  is_trash: string;
+
+  @Column({ default: 0 })
+  priority: number;
+
+  @Column({ name: 'date_added', type: 'datetime' })
   created_at: Date;
 
-  @UpdateDateColumn()
+  @Column({ name: 'last_updated', type: 'timestamp' })
   updated_at: Date;
 
   // Relations
@@ -120,27 +87,7 @@ export class Property {
   @JoinColumn({ name: 'category_id' })
   category: Category;
 
-  @ManyToOne(() => Subcategory)
-  @JoinColumn({ name: 'subcategory_id' })
-  subcategory: Subcategory;
-
   @ManyToOne(() => Community)
-  @JoinColumn({ name: 'community_id' })
+  @JoinColumn({ name: 'city' })
   community: Community;
-
-  @ManyToOne(() => SubCommunity)
-  @JoinColumn({ name: 'sub_community_id' })
-  subCommunity: SubCommunity;
-
-  @OneToMany(() => PropertyImage, (image) => image.property)
-  images: PropertyImage[];
-
-  @OneToMany(() => PropertyAmenity, (amenity) => amenity.property)
-  amenities: PropertyAmenity[];
-
-  @OneToMany(() => PropertyFaq, (faq) => faq.property)
-  faqs: PropertyFaq[];
-
-  @OneToMany(() => PropertyFloorPlan, (floorPlan) => floorPlan.property)
-  floorPlans: PropertyFloorPlan[];
 }

@@ -3,10 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  ManyToOne,
-  JoinColumn,
 } from 'typeorm';
-import { Property } from './property.entity';
 
 @Entity('mw_ad_floor_plan')
 export class PropertyFloorPlan {
@@ -39,8 +36,4 @@ export class PropertyFloorPlan {
 
   @CreateDateColumn()
   created_at: Date;
-
-  @ManyToOne(() => Property, (property) => property.floorPlans)
-  @JoinColumn({ name: 'ad_id' })
-  property: Property;
 }

@@ -2,62 +2,55 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
 import { SubCommunity } from './sub-community.entity';
 
 @Entity('mw_community')
 export class Community {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'community_id' })
   id: number;
 
-  @Column({ length: 255 })
+  @Column({ name: 'community_name', length: 250 })
   name: string;
 
-  @Column({ length: 255, nullable: true })
+  @Column({ nullable: true })
+  stateid: number;
+
+  @Column({ nullable: true })
+  district_id: number;
+
+  @Column({ nullable: true })
+  city_id: number;
+
+  @Column({ name: 'HaveSubComm', length: 5, default: '0' })
+  has_sub_communities: string;
+
+  @Column({ length: 250, nullable: true })
   slug: string;
 
-  @Column({ type: 'text', nullable: true })
-  description: string;
-
-  @Column({ length: 255, nullable: true })
-  image: string;
-
-  @Column({ length: 255, nullable: true })
-  banner_image: string;
-
-  @Column({ type: 'decimal', precision: 10, scale: 8, nullable: true })
-  latitude: number;
-
-  @Column({ type: 'decimal', precision: 11, scale: 8, nullable: true })
-  longitude: number;
-
-  @Column({ type: 'tinyint', default: 1 })
-  status: number;
-
-  @Column({ type: 'tinyint', default: 0 })
-  featured: number;
-
-  @Column({ type: 'int', default: 0 })
-  sort_order: number;
-
-  @Column({ length: 255, nullable: true })
+  @Column({ length: 150, nullable: true })
   meta_title: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ length: 255, nullable: true })
   meta_description: string;
 
-  @Column({ type: 'text', nullable: true })
-  meta_keywords: string;
+  @Column({ length: 1, nullable: true })
+  highend: string;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @Column({ length: 1, nullable: true })
+  featured: string;
 
-  @UpdateDateColumn()
-  updated_at: Date;
+  @Column({ nullable: true })
+  priority: number;
 
-  @OneToMany(() => SubCommunity, (subCommunity) => subCommunity.community)
+  @Column({ length: 150, nullable: true })
+  image: string;
+
+  @Column({ length: 150, nullable: true })
+  image2: string;
+
+  // Relations
+  @OneToMany(() => SubCommunity, (sub) => sub.community)
   subCommunities: SubCommunity[];
 }

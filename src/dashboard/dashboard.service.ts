@@ -1,20 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, IsNull } from 'typeorm';
 import {
-  Property,
   Project,
   Developer,
   Community,
   Contact,
-  User,
 } from '../entities';
 
 @Injectable()
 export class DashboardService {
   constructor(
-    @InjectRepository(Property)
-    private propertyRepository: Repository<Property>,
     @InjectRepository(Project)
     private projectRepository: Repository<Project>,
     @InjectRepository(Developer)
@@ -23,30 +19,26 @@ export class DashboardService {
     private communityRepository: Repository<Community>,
     @InjectRepository(Contact)
     private contactRepository: Repository<Contact>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
   ) {}
 
   async getStats() {
     try {
       const [
-        propertiesCount,
         projectsCount,
         developersCount,
         communitiesCount,
         contactsCount,
         unreadContactsCount,
       ] = await Promise.all([
-        this.propertyRepository.count(),
         this.projectRepository.count(),
         this.developerRepository.count(),
         this.communityRepository.count(),
         this.contactRepository.count(),
-        this.contactRepository.count({ where: { is_read: 0 } }),
+        this.contactRepository.count({ where: { is_read: IsNull() } }),
       ]);
 
       return {
-        properties: propertiesCount,
+        properties: 'Bitrix24 API', // Properties come from Bitrix24 XML feeds
         projects: projectsCount,
         developers: developersCount,
         communities: communitiesCount,
@@ -54,9 +46,9 @@ export class DashboardService {
         unreadContacts: unreadContactsCount,
       };
     } catch (error) {
-      // Return zeros if database is not connected yet
+      console.error('Stats error:', error);
       return {
-        properties: 0,
+        properties: 'Bitrix24 API',
         projects: 0,
         developers: 0,
         communities: 0,
@@ -66,24 +58,11 @@ export class DashboardService {
     }
   }
 
-  async getRecentProperties(limit = 5) {
-    try {
-      return await this.propertyRepository.find({
-        order: { created_at: 'DESC' },
-        take: limit,
-        relations: ['category', 'community'],
-      });
-    } catch {
-      return [];
-    }
-  }
-
   async getRecentProjects(limit = 5) {
     try {
       return await this.projectRepository.find({
         order: { created_at: 'DESC' },
         take: limit,
-        relations: ['developer', 'community'],
       });
     } catch {
       return [];
@@ -93,6 +72,17 @@ export class DashboardService {
   async getRecentContacts(limit = 5) {
     try {
       return await this.contactRepository.find({
+        order: { date: 'DESC' },
+        take: limit,
+      });
+    } catch {
+      return [];
+    }
+  }
+
+  async getRecentDevelopers(limit = 5) {
+    try {
+      return await this.developerRepository.find({
         order: { created_at: 'DESC' },
         take: limit,
       });

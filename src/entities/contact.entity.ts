@@ -2,7 +2,6 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
 } from 'typeorm';
 
 @Entity('mw_contact_us')
@@ -10,48 +9,42 @@ export class Contact {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 100 })
-  name: string;
+  @Column()
+  type: number;
 
-  @Column({ length: 255 })
+  @Column({ length: 150 })
   email: string;
 
-  @Column({ length: 50, nullable: true })
-  phone: string;
+  @Column({ length: 150 })
+  name: string;
 
-  @Column({ length: 255, nullable: true })
-  subject: string;
-
-  @Column({ type: 'text' })
+  @Column({ name: 'meassage', type: 'text' })
   message: string;
 
-  @Column({ length: 50, nullable: true })
-  source: string; // contact-form, property-inquiry, project-inquiry
+  @Column({ length: 250, nullable: true })
+  city: string;
 
-  @Column({ nullable: true })
+  @Column({ length: 20, nullable: true })
+  phone: string;
+
+  @Column({ length: 250, nullable: true })
+  url: string;
+
+  @Column({ name: 'ad_id', nullable: true })
   property_id: number;
 
+  @Column({ name: 'contact_type', type: 'enum', enum: ['CONTACT', 'ENQUIRY'], default: 'CONTACT' })
+  contact_type: string;
+
+  @Column({ name: 'is_p', length: 1, nullable: true })
+  is_read: string;
+
   @Column({ nullable: true })
-  project_id: number;
+  user_id: number;
 
-  @Column({ type: 'tinyint', default: 0 })
-  is_read: number;
+  @Column({ type: 'timestamp' })
+  date: Date;
 
-  @Column({ type: 'tinyint', default: 0 })
-  is_replied: number;
-
-  @Column({ type: 'text', nullable: true })
-  reply: string;
-
-  @Column({ type: 'datetime', nullable: true })
-  replied_at: Date;
-
-  @Column({ length: 50, nullable: true })
-  ip_address: string;
-
-  @Column({ type: 'text', nullable: true })
-  user_agent: string;
-
-  @CreateDateColumn()
+  @Column({ name: 'date_added', type: 'datetime', nullable: true })
   created_at: Date;
 }

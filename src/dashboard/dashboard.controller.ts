@@ -9,16 +9,16 @@ export class DashboardController {
   @Render('dashboard')
   async getDashboard() {
     const stats = await this.dashboardService.getStats();
-    const recentProperties = await this.dashboardService.getRecentProperties(5);
     const recentProjects = await this.dashboardService.getRecentProjects(5);
     const recentContacts = await this.dashboardService.getRecentContacts(5);
+    const recentDevelopers = await this.dashboardService.getRecentDevelopers(5);
 
     return {
       title: 'Dashboard',
       stats,
-      recentProperties,
       recentProjects,
       recentContacts,
+      recentDevelopers,
     };
   }
 

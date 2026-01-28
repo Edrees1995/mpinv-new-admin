@@ -5,7 +5,6 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Property } from './property.entity';
 import { Amenity } from './amenity.entity';
 
 @Entity('mw_ad_amenities')
@@ -18,10 +17,6 @@ export class PropertyAmenity {
 
   @Column({ nullable: true })
   amenity_id: number;
-
-  @ManyToOne(() => Property, (property) => property.amenities)
-  @JoinColumn({ name: 'ad_id' })
-  property: Property;
 
   @ManyToOne(() => Amenity)
   @JoinColumn({ name: 'amenity_id' })

@@ -2,74 +2,58 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
 import { Project } from './project.entity';
 
 @Entity('mw_developers')
 export class Developer {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'developer_id' })
   id: number;
 
-  @Column({ length: 255 })
+  @Column({ name: 'developer_name', length: 250 })
   name: string;
-
-  @Column({ length: 255, nullable: true })
-  slug: string;
 
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @Column({ length: 255, nullable: true })
+  @Column({ length: 250, nullable: true })
   logo: string;
 
-  @Column({ length: 255, nullable: true })
-  banner_image: string;
+  @Column({ type: 'enum', enum: ['A', 'I'], default: 'A' })
+  status: string;
 
-  @Column({ length: 255, nullable: true })
+  @Column({ name: 'isTrash', type: 'enum', enum: ['0', '1'], default: '0' })
+  is_trash: string;
+
+  @Column({ name: 'link_url', length: 250, nullable: true })
   website: string;
 
-  @Column({ length: 100, nullable: true })
-  email: string;
+  @Column({ length: 250, nullable: true })
+  slug: string;
 
-  @Column({ length: 50, nullable: true })
+  @Column({ length: 1, nullable: true })
+  featured: string;
+
+  @Column({ nullable: true })
+  priority: number;
+
+  @Column({ length: 20, nullable: true })
   phone: string;
 
-  @Column({ type: 'text', nullable: true })
-  address: string;
-
-  @Column({ type: 'int', nullable: true })
-  established_year: number;
-
-  @Column({ type: 'int', default: 0 })
-  projects_count: number;
-
-  @Column({ type: 'tinyint', default: 1 })
-  status: number;
-
-  @Column({ type: 'tinyint', default: 0 })
-  featured: number;
-
-  @Column({ type: 'int', default: 0 })
-  sort_order: number;
+  @Column({ length: 150, nullable: true })
+  email: string;
 
   @Column({ length: 255, nullable: true })
-  meta_title: string;
+  address: string;
 
-  @Column({ type: 'text', nullable: true })
-  meta_description: string;
+  @Column({ name: 'show_home', length: 1, nullable: true })
+  show_on_home: string;
 
-  @Column({ type: 'text', nullable: true })
-  meta_keywords: string;
-
-  @CreateDateColumn()
+  @Column({ name: 'added_date', type: 'timestamp' })
   created_at: Date;
 
-  @UpdateDateColumn()
-  updated_at: Date;
-
+  // Relations
   @OneToMany(() => Project, (project) => project.developer)
   projects: Project[];
 }
