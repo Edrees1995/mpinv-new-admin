@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { OffplanProject, Developer, Community } from '../entities';
+import { OffplanProject, Developer, Community, AdImage, AdPropertyType, AdFloorPlan, AdPaymentPlan } from '../entities';
 
 // Base URL for images stored in the old admin panel
 const IMAGE_BASE_URL = 'https://admin.mpinv.cloud/uploads/ads/';
@@ -50,6 +50,14 @@ export class ProjectsService {
     private developerRepository: Repository<Developer>,
     @InjectRepository(Community)
     private communityRepository: Repository<Community>,
+    @InjectRepository(AdImage)
+    private adImageRepository: Repository<AdImage>,
+    @InjectRepository(AdPropertyType)
+    private adPropertyTypeRepository: Repository<AdPropertyType>,
+    @InjectRepository(AdFloorPlan)
+    private adFloorPlanRepository: Repository<AdFloorPlan>,
+    @InjectRepository(AdPaymentPlan)
+    private adPaymentPlanRepository: Repository<AdPaymentPlan>,
   ) {}
 
   // Transform project to include full image URLs
@@ -72,6 +80,39 @@ export class ProjectsService {
     // Also transform developer logo if loaded via relation
     if (project.developer?.logo && !project.developer.logo.startsWith('http')) {
       project.developer.logo = IMAGE_BASE_URL + project.developer.logo;
+    }
+    // Transform gallery images
+    if (project.images && project.images.length > 0) {
+      project.images = project.images
+        .filter((img) => img.is_trash === '0' && img.status === 'A')
+        .map((img) => {
+          if (img.image_name && !img.image_name.startsWith('http')) {
+            img.image_name = IMAGE_BASE_URL + img.image_name;
+          }
+          return img;
+        });
+    }
+    // Transform property type images and floor plans
+    // Handle both old admin (filename only) and new admin (full URL) formats
+    if (project.propertyTypes && project.propertyTypes.length > 0) {
+      project.propertyTypes = project.propertyTypes.map((pt) => {
+        if (pt.image && !pt.image.startsWith('http')) {
+          pt.image = IMAGE_BASE_URL + pt.image;
+        }
+        if (pt.floor_plan && !pt.floor_plan.startsWith('http')) {
+          pt.floor_plan = IMAGE_BASE_URL + pt.floor_plan;
+        }
+        return pt;
+      });
+    }
+    // Transform floor plan files
+    if (project.floorPlans && project.floorPlans.length > 0) {
+      project.floorPlans = project.floorPlans.map((fp) => {
+        if (fp.floor_file && !fp.floor_file.startsWith('http')) {
+          fp.floor_file = IMAGE_BASE_URL + fp.floor_file;
+        }
+        return fp;
+      });
     }
     return project;
   }
@@ -130,7 +171,7 @@ export class ProjectsService {
   async findOne(id: number): Promise<OffplanProject> {
     const project = await this.projectRepository.findOne({
       where: { id, section_id: OFFPLAN_SECTION_ID },
-      relations: ['developer', 'community'],
+      relations: ['developer', 'community', 'images', 'propertyTypes', 'floorPlans', 'paymentPlans'],
     });
 
     if (!project) {
@@ -143,7 +184,7 @@ export class ProjectsService {
   async findBySlug(slug: string): Promise<OffplanProject> {
     const project = await this.projectRepository.findOne({
       where: { slug, section_id: OFFPLAN_SECTION_ID },
-      relations: ['developer', 'community'],
+      relations: ['developer', 'community', 'images', 'propertyTypes', 'floorPlans', 'paymentPlans'],
     });
 
     if (!project) {
@@ -265,5 +306,87 @@ export class ProjectsService {
       limit,
       totalPages: Math.ceil(total / limit),
     };
+  }
+
+  // Property Types Management
+  async updatePropertyTypes(projectId: number, propertyTypes: any[]): Promise<void> {
+    if (!propertyTypes || !Array.isArray(propertyTypes)) return;
+
+    const NEW_ADMIN_IMAGE_URL = 'https://new-admin.mpinv.cloud/uploads/ads/';
+
+    for (const pt of propertyTypes) {
+      // Handle image URLs - keep full URL for new admin uploads, strip old admin base URL
+      let image = pt.image || '';
+      let floorPlan = pt.floor_plan || '';
+
+      // If it's a new admin URL, store the full URL
+      // If it's an old admin URL, strip the base to store just filename
+      // If it's just a filename, keep it as is
+      if (image.startsWith(IMAGE_BASE_URL)) {
+        image = image.replace(IMAGE_BASE_URL, '');
+      }
+      // Keep new admin full URLs as-is
+      if (floorPlan.startsWith(IMAGE_BASE_URL)) {
+        floorPlan = floorPlan.replace(IMAGE_BASE_URL, '');
+      }
+
+      const propertyTypeData = {
+        ad_id: projectId,
+        title: pt.title || '',
+        bed: parseInt(pt.bed) || 0,
+        bath: parseInt(pt.bath) || 0,
+        size: parseFloat(pt.size) || 0,
+        size_to: parseFloat(pt.size_to) || 0,
+        from_price: parseFloat(pt.from_price) || 0,
+        to_price: parseFloat(pt.to_price) || 0,
+        description: pt.description || '',
+        image: image,
+        floor_plan: floorPlan,
+        last_updated: new Date(),
+      };
+
+      if (pt.id && pt.id !== '') {
+        // Update existing property type
+        await this.adPropertyTypeRepository.update(pt.id, propertyTypeData);
+      } else {
+        // Create new property type
+        const newPropertyType = this.adPropertyTypeRepository.create(propertyTypeData);
+        await this.adPropertyTypeRepository.save(newPropertyType);
+      }
+    }
+  }
+
+  async deletePropertyType(id: number): Promise<void> {
+    const result = await this.adPropertyTypeRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Property type with ID ${id} not found`);
+    }
+  }
+
+  async getPropertyType(id: number): Promise<AdPropertyType> {
+    const propertyType = await this.adPropertyTypeRepository.findOne({
+      where: { id },
+    });
+    if (!propertyType) {
+      throw new NotFoundException(`Property type with ID ${id} not found`);
+    }
+    return propertyType;
+  }
+
+  async updatePropertyTypeImage(
+    propertyTypeId: number,
+    imageType: string,
+    filename: string,
+  ): Promise<void> {
+    const propertyType = await this.getPropertyType(propertyTypeId);
+
+    if (imageType === 'image') {
+      propertyType.image = filename;
+    } else if (imageType === 'floor_plan') {
+      propertyType.floor_plan = filename;
+    }
+
+    propertyType.last_updated = new Date();
+    await this.adPropertyTypeRepository.save(propertyType);
   }
 }

@@ -11,10 +11,28 @@ import {
   Res,
   ParseIntPipe,
   HttpStatus,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 import type { Response } from 'express';
 import { ProjectsService } from './projects.service';
 import type { CreateProjectDto, UpdateProjectDto } from './projects.service';
+
+// Configure multer storage for property type images - NEW ADMIN SEPARATE
+const propertyTypeStorage = diskStorage({
+  destination: '/var/www/new-admin.mpinv.cloud/public/uploads/ads',
+  filename: (req, file, callback) => {
+    const uniqueSuffix = Date.now() + '_' + Math.round(Math.random() * 1e9);
+    const ext = extname(file.originalname).toLowerCase();
+    callback(null, `pt_${uniqueSuffix}${ext}`);
+  },
+});
+
+// New admin image base URL
+const NEW_ADMIN_IMAGE_URL = 'https://new-admin.mpinv.cloud/uploads/ads/';
 
 // HTML escape function to prevent XSS
 function escapeHtml(text: string | null | undefined): string {
@@ -168,16 +186,28 @@ export class ProjectsController {
   @Put(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateProjectDto: UpdateProjectDto,
+    @Body() body: any,
     @Res() res: Response,
   ) {
     try {
-      await this.projectsService.update(id, updateProjectDto);
+      // Extract property types from body
+      const { propertyTypes, ...updateProjectDto } = body;
+
+      // Update the project
+      await this.projectsService.update(id, updateProjectDto as UpdateProjectDto);
+
+      // Update property types if provided
+      if (propertyTypes) {
+        await this.projectsService.updatePropertyTypes(id, propertyTypes);
+      }
 
       // Check if this is an HTMX request
       if (res.req.headers['hx-request']) {
-        res.setHeader('HX-Redirect', `/projects/${id}`);
-        return res.status(HttpStatus.OK).send();
+        return res.status(HttpStatus.OK).send(`
+          <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            Project updated successfully!
+          </div>
+        `);
       }
 
       return res.redirect(`/projects/${id}`);
@@ -192,6 +222,63 @@ export class ProjectsController {
       }
 
       return res.redirect(`/projects/${id}/edit?error=1`);
+    }
+  }
+
+  @Delete('property-types/:id')
+  async deletePropertyType(
+    @Param('id', ParseIntPipe) id: number,
+    @Res() res: Response,
+  ) {
+    try {
+      await this.projectsService.deletePropertyType(id);
+      return res.status(HttpStatus.OK).json({ success: true });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        success: false,
+        error: errorMessage,
+      });
+    }
+  }
+
+  @Post('property-types/upload')
+  @UseInterceptors(FileInterceptor('file', { storage: propertyTypeStorage }))
+  async uploadPropertyTypeImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('propertyTypeId') propertyTypeId: string,
+    @Body('imageType') imageType: string,
+    @Res() res: Response,
+  ) {
+    try {
+      if (!file) {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+          success: false,
+          error: 'No file uploaded',
+        });
+      }
+
+      // If propertyTypeId is provided and not empty, update the database
+      if (propertyTypeId && propertyTypeId !== '' && propertyTypeId !== 'undefined') {
+        await this.projectsService.updatePropertyTypeImage(
+          parseInt(propertyTypeId),
+          imageType,
+          file.filename,
+        );
+      }
+
+      return res.status(HttpStatus.OK).json({
+        success: true,
+        filename: file.filename,
+        fullUrl: NEW_ADMIN_IMAGE_URL + file.filename,
+        originalName: file.originalname,
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        success: false,
+        error: errorMessage,
+      });
     }
   }
 

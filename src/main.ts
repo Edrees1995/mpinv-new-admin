@@ -8,6 +8,9 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  // Serve static files from public folder (for uploads)
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+
   // Set up view engine
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('hbs');

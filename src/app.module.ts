@@ -8,6 +8,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { DevelopersModule } from './developers/developers.module';
 import { CommunitiesModule } from './communities/communities.module';
 import { SubCommunitiesModule } from './sub-communities/sub-communities.module';
+import { ApiModule } from './api/api.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { SubCommunitiesModule } from './sub-communities/sub-communities.module';
     DevelopersModule,
     CommunitiesModule,
     SubCommunitiesModule,
+    ApiModule,
   ],
 })
 export class AppModule {}

@@ -3,10 +3,15 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
+  OneToMany,
   JoinColumn,
 } from 'typeorm';
 import { Developer } from './developer.entity';
 import { Community } from './community.entity';
+import { AdImage } from './ad-image.entity';
+import { AdPropertyType } from './ad-property-type.entity';
+import { AdFloorPlan } from './ad-floor-plan.entity';
+import { AdPaymentPlan } from './ad-payment-plan.entity';
 
 @Entity('mw_place_an_ad')
 export class OffplanProject {
@@ -132,4 +137,16 @@ export class OffplanProject {
   @ManyToOne(() => Community)
   @JoinColumn({ name: 'community_id' })
   community: Community;
+
+  @OneToMany(() => AdImage, (image) => image.project)
+  images: AdImage[];
+
+  @OneToMany(() => AdPropertyType, (propertyType) => propertyType.project)
+  propertyTypes: AdPropertyType[];
+
+  @OneToMany(() => AdFloorPlan, (floorPlan) => floorPlan.project)
+  floorPlans: AdFloorPlan[];
+
+  @OneToMany(() => AdPaymentPlan, (paymentPlan) => paymentPlan.project)
+  paymentPlans: AdPaymentPlan[];
 }
