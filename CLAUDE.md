@@ -39,11 +39,15 @@ Migrating from old Yii PHP admin to modern NestJS + Handlebars + Tailwind CSS + 
 
 ## Deployment Commands
 ```bash
-# SSH to server
+# SSH to server (password: @3L#n+8x?a/9X)
 ssh root@76.13.18.59
 
-# Deploy updates
+# Deploy updates (with sshpass for non-interactive)
+sshpass -p '@3L#n+8x?a/9X' ssh -o StrictHostKeyChecking=no root@76.13.18.59 "source /root/.nvm/nvm.sh && nvm use 20 && cd /var/www/new-admin.mpinv.cloud && git pull origin main && npm install && npm run build && pm2 restart new-admin --update-env"
+
+# Or step-by-step on server:
 cd /var/www/new-admin.mpinv.cloud
+source /root/.nvm/nvm.sh && nvm use 20
 git pull origin main
 npm install
 npm run build
@@ -51,7 +55,16 @@ pm2 restart new-admin --update-env
 
 # View logs
 pm2 logs new-admin
+
+# IMPORTANT: Server uses nvm - must run `source /root/.nvm/nvm.sh && nvm use 20` before npm/node commands
 ```
+
+## Keeping Server & Local In Sync
+- **Always** commit and push locally first, then `git pull` on server
+- Verify alignment: compare `git log --oneline -1` on both local and server
+- Server path: `/var/www/new-admin.mpinv.cloud`
+- Local path: `/Users/edreessalih/Desktop/Master Piecs/Master picece/Projects/projects/new-admin`
+- After pull on server: `npm install && npm run build && pm2 restart new-admin --update-env`
 
 ## Implemented Modules (Phase 1 Complete)
 
@@ -68,6 +81,9 @@ pm2 logs new-admin
 ### 3. Offplan Projects Module
 - **Files**: `src/projects/`, `views/projects/`
 - **Features**: CRUD operations, list/view/create/edit pages, pagination, search/filter
+- **37 Synced Fields** (Phase 3): category, subcategory, type_of_project, off_plan, listing_type, launch_date, possession, completion_date, sale_status, pay_plan, payment_plan, rera, ref_no, ded, brn, qr, agent_name, agent_phone, agent_email, agent_logo, mobile_number, meta_title, meta_keywords, meta_description, bg_img, bg_img_mobile, sliding, home_sliding, caption, d_right, bg_attachment1, bg_attachment2, parking, furnished, currency_abr, area_measurement, area_unit
+- **Relations**: Developer, Community, SubCommunity, Category, Subcategory, AdImage, AdPropertyType, AdFloorPlan, AdPaymentPlan
+- **Verification**: `/projects/verify` (completeness dashboard), `/projects/:id/compare` (side-by-side with old admin API)
 
 ### 4. Developers Module
 - **Files**: `src/developers/`, `views/developers/`
@@ -142,9 +158,42 @@ https://github.com/Edrees1995/mpinv-new-admin
 4. **Dashboard Logic**: Fixed unread contacts count using `Not(Equal('1'))` instead of `IsNull()`
 5. **Data Attributes**: Replaced inline JavaScript with data attributes for onclick handlers
 
-### Remaining Items for Phase 3 (QA/Testing)
+### Remaining Items for Future Phases
 - Add proper DTO validation with class-validator
 - Add CSRF protection to forms
-- Fix route ordering for `api/search` endpoints
+- Fix route ordering for `api/search` and `api/list` endpoints (currently after `:id` param route)
 - Add error handling with try-catch in controllers
 - Add `rel="noopener noreferrer"` to external links
+- Fix pre-existing `Setting.id` column error in settings entity
+
+## Phase 3: Old Admin Field Sync (Completed)
+
+### What Was Done
+Added 37 missing database columns to the offplan project entity so every field from the old admin is visible and editable in the new admin.
+
+### Files Modified
+| File | Change |
+|------|--------|
+| `src/entities/offplan-project.entity.ts` | +37 column mappings, +3 relations (Category, Subcategory, SubCommunity) |
+| `src/projects/projects.service.ts` | Updated DTOs, image transforms, new repository injections, lookup methods |
+| `src/projects/projects.controller.ts` | New data to views, `/verify` and `/:id/compare` endpoints |
+| `src/projects/projects.module.ts` | Import SubCommunity, Category, Subcategory entities |
+| `views/projects/view.hbs` | +6 display sections (Classification, Payment Plan, Agent, Legal, SEO, Slider Images) |
+| `views/projects/edit.hbs` | +8 form sections for all 37 new fields |
+| `views/projects/create.hbs` | Rebuilt with all field sections |
+| `views/projects/verify.hbs` | **NEW** - Verification dashboard (completeness %, 10/page) |
+| `views/projects/compare.hbs` | **NEW** - Side-by-side comparison with old admin API |
+
+### New Field Groups
+- **Classification**: category_id, sub_category_id, type_of_project, off_plan, listing_type
+- **Timeline/Sales**: launch_date, possession, completion_date, sale_status
+- **Payment Plan**: pay_plan (label), payment_plan (JSON breakdown)
+- **Registration/Legal**: rera, ref_no, ded, brn, qr
+- **Agent Info**: agent_name, agent_phone, agent_email, agent_logo, mobile_number
+- **SEO**: meta_title, meta_keywords, meta_description
+- **Slider/Background**: bg_img, bg_img_mobile, sliding, home_sliding, caption, d_right, bg_attachment1, bg_attachment2
+- **Additional**: parking, furnished, currency_abr, area_measurement, area_unit
+
+### Verification Pages
+- **`/projects/verify`**: Dashboard with completeness % per project, color-coded field indicators, pagination
+- **`/projects/:id/compare`**: Fetches old admin API (`offplan_detail?slug=X`), shows side-by-side field comparison with match/diff/missing counts
