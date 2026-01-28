@@ -5,6 +5,7 @@ export { PropertyAmenity } from './property-amenity.entity';
 export { PropertyFaq } from './property-faq.entity';
 export { PropertyFloorPlan } from './property-floor-plan.entity';
 export { Project } from './project.entity';
+export { OffplanProject } from './offplan-project.entity';
 export { Developer } from './developer.entity';
 export { Community } from './community.entity';
 export { SubCommunity } from './sub-community.entity';

@@ -3,22 +3,24 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DashboardController } from './dashboard.controller';
 import { DashboardService } from './dashboard.service';
 import {
-  Project,
+  OffplanProject,
   Developer,
   Community,
   Contact,
 } from '../entities';
 import { PropertiesModule } from '../properties/properties.module';
+import { ProjectsModule } from '../projects/projects.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Project,
+      OffplanProject,
       Developer,
       Community,
       Contact,
     ]),
     PropertiesModule,
+    ProjectsModule,
   ],
   controllers: [DashboardController],
   providers: [DashboardService],

@@ -14,10 +14,20 @@
 </nav>
 
 <!-- Page Header -->
-<div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+<div class="mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
     <div>
-        <h1 class="text-2xl font-bold text-gray-900">{{project.name}}</h1>
-        <p class="mt-1 text-sm text-gray-500">Project details and information</p>
+        <div class="flex items-center gap-3">
+            <h1 class="text-2xl font-bold text-gray-900">{{project.name}}</h1>
+            {{#if (eq project.featured "Y")}}
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                </svg>
+                Featured
+            </span>
+            {{/if}}
+        </div>
+        <p class="mt-1 text-sm text-gray-500">{{#if project.slug}}/{{project.slug}}{{/if}}</p>
     </div>
     <div class="flex items-center gap-3">
         <a href="/projects/{{project.id}}/edit" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
@@ -61,33 +71,153 @@
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Description</h2>
             {{#if project.description}}
-            <div class="prose prose-sm max-w-none text-gray-600">
+            <div class="prose prose-sm max-w-none text-gray-600 whitespace-pre-line">
                 {{project.description}}
+            </div>
+            {{else if project.short_description}}
+            <div class="prose prose-sm max-w-none text-gray-600 whitespace-pre-line">
+                {{project.short_description}}
             </div>
             {{else}}
             <p class="text-gray-500 italic">No description available</p>
             {{/if}}
         </div>
 
-        <!-- List Data (JSON) -->
-        {{#if listData}}
+        <!-- Property Details -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">List Data</h2>
-            <pre class="bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto text-gray-700">{{json listData}}</pre>
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Property Details</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {{#if project.bedrooms}}
+                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                    <svg class="w-6 h-6 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    <p class="text-2xl font-bold text-gray-900">{{project.bedrooms}}</p>
+                    <p class="text-xs text-gray-500">Bedrooms</p>
+                </div>
+                {{/if}}
+                {{#if project.bathrooms}}
+                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                    <svg class="w-6 h-6 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path>
+                    </svg>
+                    <p class="text-2xl font-bold text-gray-900">{{project.bathrooms}}</p>
+                    <p class="text-xs text-gray-500">Bathrooms</p>
+                </div>
+                {{/if}}
+                {{#if project.size}}
+                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                    <svg class="w-6 h-6 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                    </svg>
+                    <p class="text-2xl font-bold text-gray-900">{{project.size}}</p>
+                    <p class="text-xs text-gray-500">sq.ft</p>
+                </div>
+                {{/if}}
+                {{#if project.no_of_units}}
+                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                    <svg class="w-6 h-6 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                    <p class="text-2xl font-bold text-gray-900">{{project.no_of_units}}</p>
+                    <p class="text-xs text-gray-500">Units</p>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+
+        <!-- Documents -->
+        {{#if (or project.floor_pdf project.payment_pdf project.brochure project.brochure_link)}}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Documents</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {{#if project.floor_pdf}}
+                <a href="{{project.floor_pdf}}" target="_blank" class="flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <svg class="w-8 h-8 text-red-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                    <span class="text-sm text-gray-600">Floor Plan</span>
+                </a>
+                {{/if}}
+                {{#if project.payment_pdf}}
+                <a href="{{project.payment_pdf}}" target="_blank" class="flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <svg class="w-8 h-8 text-green-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                    <span class="text-sm text-gray-600">Payment Plan</span>
+                </a>
+                {{/if}}
+                {{#if project.brochure}}
+                <a href="{{project.brochure}}" target="_blank" class="flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <svg class="w-8 h-8 text-blue-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                    <span class="text-sm text-gray-600">Brochure</span>
+                </a>
+                {{/if}}
+                {{#if project.brochure_link}}
+                <a href="{{project.brochure_link}}" target="_blank" class="flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <svg class="w-8 h-8 text-purple-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                    </svg>
+                    <span class="text-sm text-gray-600">Online Brochure</span>
+                </a>
+                {{/if}}
+            </div>
         </div>
         {{/if}}
 
-        <!-- Property Data (JSON) -->
-        {{#if propertyData}}
+        <!-- Videos -->
+        {{#if (or project.youtube_url project.video_link)}}
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Property Data</h2>
-            <pre class="bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto text-gray-700">{{json propertyData}}</pre>
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Videos</h2>
+            <div class="space-y-4">
+                {{#if project.youtube_url}}
+                <a href="{{project.youtube_url}}" target="_blank" rel="noopener noreferrer" class="flex items-center p-4 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+                    <svg class="w-8 h-8 text-red-600 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path>
+                    </svg>
+                    <div>
+                        <p class="font-medium text-gray-900">YouTube Video</p>
+                        <p class="text-sm text-gray-500">{{project.youtube_url}}</p>
+                    </div>
+                </a>
+                {{/if}}
+                {{#if project.video_link}}
+                <a href="{{project.video_link}}" target="_blank" rel="noopener noreferrer" class="flex items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                    <svg class="w-8 h-8 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div>
+                        <p class="font-medium text-gray-900">Video Link</p>
+                        <p class="text-sm text-gray-500">{{project.video_link}}</p>
+                    </div>
+                </a>
+                {{/if}}
+            </div>
+        </div>
+        {{/if}}
+
+        <!-- Highlights -->
+        {{#if highlightsData}}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Project Highlights</h2>
+            <pre class="bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto text-gray-700">{{json highlightsData}}</pre>
         </div>
         {{/if}}
     </div>
 
     <!-- Sidebar -->
     <div class="space-y-6">
+        <!-- Price Card -->
+        {{#if project.price}}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <p class="text-sm text-gray-500">Starting From</p>
+            <p class="text-3xl font-bold text-green-600">AED {{project.price}}</p>
+        </div>
+        {{/if}}
+
         <!-- Project Info -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Project Information</h2>
@@ -106,10 +236,18 @@
                         {{/if}}
                     </dd>
                 </div>
+                {{#if project.project_status}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Project Status</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.project_status}}</dd>
+                </div>
+                {{/if}}
                 <div>
                     <dt class="text-sm font-medium text-gray-500">Developer</dt>
                     <dd class="mt-1 text-sm text-gray-900">
-                        {{#if project.developer}}
+                        {{#if project.developer_name}}
+                        {{project.developer_name}}
+                        {{else if project.developer}}
                         <a href="/developers/{{project.developer.id}}" class="text-blue-600 hover:underline">
                             {{project.developer.name}}
                         </a>
@@ -118,6 +256,28 @@
                         {{/if}}
                     </dd>
                 </div>
+                {{#if project.community}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Community</dt>
+                    <dd class="mt-1 text-sm text-gray-900">
+                        <a href="/communities/{{project.community.community_id}}" class="text-blue-600 hover:underline">
+                            {{project.community.name}}
+                        </a>
+                    </dd>
+                </div>
+                {{/if}}
+                {{#if project.handover_date}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Handover Date</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{formatDate project.handover_date}}</dd>
+                </div>
+                {{/if}}
+                {{#if project.completion_year}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Completion Year</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.completion_year}}</dd>
+                </div>
+                {{/if}}
                 <div>
                     <dt class="text-sm font-medium text-gray-500">Project ID</dt>
                     <dd class="mt-1 text-sm text-gray-900">#{{project.id}}</dd>
@@ -145,6 +305,14 @@
             </dl>
         </div>
 
+        <!-- Developer Logo -->
+        {{#if project.developer_logo}}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Developer</h2>
+            <img src="{{project.developer_logo}}" alt="Developer Logo" class="max-h-20 mx-auto">
+        </div>
+        {{/if}}
+
         <!-- Quick Actions -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
@@ -161,14 +329,6 @@
                     </svg>
                     Create New Project
                 </a>
-                {{#if project.developer}}
-                <a href="/developers/{{project.developer.id}}" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                    </svg>
-                    View Developer
-                </a>
-                {{/if}}
             </div>
         </div>
     </div>

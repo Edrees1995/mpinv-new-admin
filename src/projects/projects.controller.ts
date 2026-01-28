@@ -39,9 +39,10 @@ export class ProjectsController {
     @Query('page') page?: string,
     @Query('search') search?: string,
     @Query('status') status?: string,
+    @Query('featured') featured?: string,
   ) {
     const pageNum = parseInt(page || '1', 10);
-    const result = await this.projectsService.findAll(pageNum, 12, search, status);
+    const result = await this.projectsService.findAll(pageNum, 12, search, status, featured);
     const stats = await this.projectsService.getStats();
 
     return {
@@ -59,6 +60,27 @@ export class ProjectsController {
       filters: {
         search: search || '',
         status: status || '',
+        featured: featured || '',
+      },
+    };
+  }
+
+  @Get('trashed')
+  @Render('projects/trashed')
+  async trashed(@Query('page') page?: string) {
+    const pageNum = parseInt(page || '1', 10);
+    const result = await this.projectsService.findTrashed(pageNum, 12);
+
+    return {
+      title: 'Trashed Projects',
+      projects: result.data,
+      pagination: {
+        page: result.page,
+        limit: result.limit,
+        total: result.total,
+        totalPages: result.totalPages,
+        hasNext: result.page < result.totalPages,
+        hasPrev: result.page > 1,
       },
     };
   }
@@ -67,10 +89,12 @@ export class ProjectsController {
   @Render('projects/create')
   async createForm() {
     const developers = await this.projectsService.getAllDevelopers();
+    const communities = await this.projectsService.getAllCommunities();
 
     return {
       title: 'Create Project',
       developers,
+      communities,
     };
   }
 
@@ -79,31 +103,20 @@ export class ProjectsController {
   async view(@Param('id', ParseIntPipe) id: number) {
     const project = await this.projectsService.findOne(id);
 
-    // Parse JSON fields if they exist
-    let listData: unknown = null;
-    let propertyData: unknown = null;
-
+    // Parse highlights JSON if exists
+    let highlightsData: unknown = null;
     try {
-      if (project.list) {
-        listData = JSON.parse(project.list);
+      if (project.highlights) {
+        highlightsData = JSON.parse(project.highlights);
       }
     } catch {
-      listData = project.list;
-    }
-
-    try {
-      if (project.property) {
-        propertyData = JSON.parse(project.property);
-      }
-    } catch {
-      propertyData = project.property;
+      highlightsData = project.highlights;
     }
 
     return {
       title: project.name,
       project,
-      listData,
-      propertyData,
+      highlightsData,
     };
   }
 
@@ -112,11 +125,13 @@ export class ProjectsController {
   async editForm(@Param('id', ParseIntPipe) id: number) {
     const project = await this.projectsService.findOne(id);
     const developers = await this.projectsService.getAllDevelopers();
+    const communities = await this.projectsService.getAllCommunities();
 
     return {
       title: `Edit ${project.name}`,
       project,
       developers,
+      communities,
     };
   }
 
@@ -141,7 +156,7 @@ export class ProjectsController {
       if (res.req.headers['hx-request']) {
         return res.status(HttpStatus.BAD_REQUEST).send(`
           <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            Error creating project: ${errorMessage}
+            Error creating project: ${escapeHtml(errorMessage)}
           </div>
         `);
       }
@@ -171,7 +186,7 @@ export class ProjectsController {
       if (res.req.headers['hx-request']) {
         return res.status(HttpStatus.BAD_REQUEST).send(`
           <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            Error updating project: ${errorMessage}
+            Error updating project: ${escapeHtml(errorMessage)}
           </div>
         `);
       }
@@ -197,12 +212,38 @@ export class ProjectsController {
       if (res.req.headers['hx-request']) {
         return res.status(HttpStatus.BAD_REQUEST).send(`
           <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            Error deleting project: ${errorMessage}
+            Error deleting project: ${escapeHtml(errorMessage)}
           </div>
         `);
       }
 
       return res.redirect('/projects?error=1');
+    }
+  }
+
+  @Post(':id/restore')
+  async restore(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
+    try {
+      await this.projectsService.restore(id);
+
+      // Check if this is an HTMX request
+      if (res.req.headers['hx-request']) {
+        res.setHeader('HX-Redirect', '/projects');
+        return res.status(HttpStatus.OK).send();
+      }
+
+      return res.redirect('/projects');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      if (res.req.headers['hx-request']) {
+        return res.status(HttpStatus.BAD_REQUEST).send(`
+          <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            Error restoring project: ${escapeHtml(errorMessage)}
+          </div>
+        `);
+      }
+
+      return res.redirect('/projects/trashed?error=1');
     }
   }
 
@@ -212,17 +253,18 @@ export class ProjectsController {
     @Query('page') page?: string,
     @Query('search') search?: string,
     @Query('status') status?: string,
+    @Query('featured') featured?: string,
     @Res() res?: Response,
   ) {
     const pageNum = parseInt(page || '1', 10);
-    const result = await this.projectsService.findAll(pageNum, 12, search, status);
+    const result = await this.projectsService.findAll(pageNum, 12, search, status, featured);
 
     // Return just the table rows for HTMX updates
     let html = '';
     for (const project of result.data) {
       const safeName = escapeHtml(project.name);
       const safeImage = escapeHtml(project.featured_image);
-      const safeDeveloperName = escapeHtml(project.developer?.name);
+      const safeDeveloperName = escapeHtml(project.developer_name || project.developer?.name);
 
       html += `
         <tr class="hover:bg-gray-50">
@@ -233,6 +275,7 @@ export class ProjectsController {
               </div>
               <div class="ml-4">
                 <div class="text-sm font-medium text-gray-900">${safeName}</div>
+                ${project.featured === 'Y' ? '<span class="text-xs text-yellow-600">Featured</span>' : ''}
               </div>
             </div>
           </td>

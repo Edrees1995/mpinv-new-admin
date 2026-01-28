@@ -2,18 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Not, Equal } from 'typeorm';
 import {
-  Project,
+  OffplanProject,
   Developer,
   Community,
   Contact,
 } from '../entities';
 import { PropertiesService } from '../properties/properties.service';
+import { ProjectsService } from '../projects/projects.service';
 
 @Injectable()
 export class DashboardService {
   constructor(
-    @InjectRepository(Project)
-    private projectRepository: Repository<Project>,
+    @InjectRepository(OffplanProject)
+    private projectRepository: Repository<OffplanProject>,
     @InjectRepository(Developer)
     private developerRepository: Repository<Developer>,
     @InjectRepository(Community)
@@ -21,6 +22,7 @@ export class DashboardService {
     @InjectRepository(Contact)
     private contactRepository: Repository<Contact>,
     private propertiesService: PropertiesService,
+    private projectsService: ProjectsService,
   ) {}
 
   async getStats() {
@@ -34,13 +36,7 @@ export class DashboardService {
         unreadContactsCount,
       ] = await Promise.all([
         this.propertiesService.count(),
-        this.projectRepository.count({
-          where: [
-            { trash: '0' },
-            { trash: '' },
-            { trash: null as any },
-          ],
-        }),
+        this.projectsService.count(),
         this.developerRepository.count({ where: { is_trash: '0' } }),
         this.communityRepository.count(),
         this.contactRepository.count(),
@@ -71,6 +67,7 @@ export class DashboardService {
   async getRecentProjects(limit = 5) {
     try {
       return await this.projectRepository.find({
+        where: { section_id: 3, is_trash: '0' },
         relations: ['developer'],
         order: { created_at: 'DESC' },
         take: limit,
