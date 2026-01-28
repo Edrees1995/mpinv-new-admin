@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import * as hbs from 'hbs';
+import type Handlebars from 'handlebars';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -14,69 +15,72 @@ async function bootstrap() {
   // Set default layout
   app.set('view options', { layout: 'layouts/main' });
 
+  // Get the handlebars instance from hbs
+  const handlebars = hbs.handlebars;
+
   // Register Handlebars helpers
-  hbs.registerHelper('eq', function (a: unknown, b: unknown) {
+  handlebars.registerHelper('eq', function (a: unknown, b: unknown) {
     return a === b;
   });
 
-  hbs.registerHelper('neq', function (a: unknown, b: unknown) {
+  handlebars.registerHelper('neq', function (a: unknown, b: unknown) {
     return a !== b;
   });
 
-  hbs.registerHelper('gt', function (a: number, b: number) {
+  handlebars.registerHelper('gt', function (a: number, b: number) {
     return a > b;
   });
 
-  hbs.registerHelper('lt', function (a: number, b: number) {
+  handlebars.registerHelper('lt', function (a: number, b: number) {
     return a < b;
   });
 
-  hbs.registerHelper('gte', function (a: number, b: number) {
+  handlebars.registerHelper('gte', function (a: number, b: number) {
     return a >= b;
   });
 
-  hbs.registerHelper('lte', function (a: number, b: number) {
+  handlebars.registerHelper('lte', function (a: number, b: number) {
     return a <= b;
   });
 
-  hbs.registerHelper('and', function (a: unknown, b: unknown) {
+  handlebars.registerHelper('and', function (a: unknown, b: unknown) {
     return a && b;
   });
 
-  hbs.registerHelper('or', function (a: unknown, b: unknown) {
+  handlebars.registerHelper('or', function (a: unknown, b: unknown) {
     return a || b;
   });
 
-  hbs.registerHelper('not', function (a: unknown) {
+  handlebars.registerHelper('not', function (a: unknown) {
     return !a;
   });
 
-  hbs.registerHelper('subtract', function (a: number, b: number) {
+  handlebars.registerHelper('subtract', function (a: number, b: number) {
     return (a || 0) - (b || 0);
   });
 
-  hbs.registerHelper('add', function (a: number, b: number) {
+  handlebars.registerHelper('add', function (a: number, b: number) {
     return (a || 0) + (b || 0);
   });
 
-  hbs.registerHelper('multiply', function (a: number, b: number) {
+  handlebars.registerHelper('multiply', function (a: number, b: number) {
     return (a || 0) * (b || 0);
   });
 
-  hbs.registerHelper('divide', function (a: number, b: number) {
+  handlebars.registerHelper('divide', function (a: number, b: number) {
     if (b === 0) return 0;
     return (a || 0) / b;
   });
 
-  hbs.registerHelper('min', function (a: number, b: number) {
+  handlebars.registerHelper('min', function (a: number, b: number) {
     return Math.min(a || 0, b || 0);
   });
 
-  hbs.registerHelper('max', function (a: number, b: number) {
+  handlebars.registerHelper('max', function (a: number, b: number) {
     return Math.max(a || 0, b || 0);
   });
 
-  hbs.registerHelper('formatDate', function (date: Date | string) {
+  handlebars.registerHelper('formatDate', function (date: Date | string) {
     if (!date) return 'N/A';
     const d = new Date(date);
     if (isNaN(d.getTime())) return 'Invalid Date';
@@ -87,7 +91,7 @@ async function bootstrap() {
     });
   });
 
-  hbs.registerHelper('formatDateTime', function (date: Date | string) {
+  handlebars.registerHelper('formatDateTime', function (date: Date | string) {
     if (!date) return 'N/A';
     const d = new Date(date);
     if (isNaN(d.getTime())) return 'Invalid Date';
@@ -100,27 +104,27 @@ async function bootstrap() {
     });
   });
 
-  hbs.registerHelper('formatNumber', function (num: number) {
+  handlebars.registerHelper('formatNumber', function (num: number) {
     if (num === null || num === undefined) return '0';
     return num.toLocaleString();
   });
 
-  hbs.registerHelper('truncate', function (str: string, len: number) {
+  handlebars.registerHelper('truncate', function (str: string, len: number) {
     if (!str) return '';
     if (str.length <= len) return str;
     return str.substring(0, len) + '...';
   });
 
-  hbs.registerHelper('substring', function (str: string, start: number, end?: number) {
+  handlebars.registerHelper('substring', function (str: string, start: number, end?: number) {
     if (!str) return '';
     return end !== undefined ? str.substring(start, end) : str.substring(start);
   });
 
-  hbs.registerHelper('json', function (context: unknown) {
+  handlebars.registerHelper('json', function (context: unknown) {
     return JSON.stringify(context, null, 2);
   });
 
-  hbs.registerHelper('range', function (start: number, end: number): number[] {
+  handlebars.registerHelper('range', function (start: number, end: number): number[] {
     const result: number[] = [];
     for (let i = start; i <= end; i++) {
       result.push(i);
@@ -128,12 +132,12 @@ async function bootstrap() {
     return result;
   });
 
-  hbs.registerHelper('ifCond', function (
+  handlebars.registerHelper('ifCond', function (
     this: unknown,
     v1: unknown,
     operator: string,
     v2: unknown,
-    options: hbs.HelperOptions,
+    options: Handlebars.HelperOptions,
   ) {
     switch (operator) {
       case '==':
