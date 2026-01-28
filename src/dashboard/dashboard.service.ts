@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull } from 'typeorm';
+import { Repository, Not, Equal } from 'typeorm';
 import {
   Project,
   Developer,
@@ -34,7 +34,7 @@ export class DashboardService {
         this.developerRepository.count(),
         this.communityRepository.count(),
         this.contactRepository.count(),
-        this.contactRepository.count({ where: { is_read: IsNull() } }),
+        this.contactRepository.count({ where: { is_read: Not(Equal('1')) } }),
       ]);
 
       return {

@@ -246,7 +246,9 @@
                     Add Sub-Community
                 </a>
                 <button
-                    onclick="deleteCommunity({{community.id}}, '{{community.name}}')"
+                    data-community-id="{{community.id}}"
+                    data-community-name="{{community.name}}"
+                    onclick="deleteCommunity(this.dataset.communityId, this.dataset.communityName)"
                     class="w-full flex items-center justify-center px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition-colors"
                 >
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

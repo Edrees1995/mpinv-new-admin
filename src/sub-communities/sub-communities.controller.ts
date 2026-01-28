@@ -92,10 +92,10 @@ export class SubCommunitiesController {
       if (createDto.sort_order !== undefined) {
         createDto.sort_order = Number(createDto.sort_order);
       }
-      if (createDto.latitude) {
+      if (createDto.latitude !== undefined && (createDto.latitude as unknown) !== '') {
         createDto.latitude = Number(createDto.latitude);
       }
-      if (createDto.longitude) {
+      if (createDto.longitude !== undefined && (createDto.longitude as unknown) !== '') {
         createDto.longitude = Number(createDto.longitude);
       }
 
@@ -151,10 +151,10 @@ export class SubCommunitiesController {
       if (updateDto.sort_order !== undefined) {
         updateDto.sort_order = Number(updateDto.sort_order);
       }
-      if (updateDto.latitude) {
+      if (updateDto.latitude !== undefined && (updateDto.latitude as unknown) !== '') {
         updateDto.latitude = Number(updateDto.latitude);
       }
-      if (updateDto.longitude) {
+      if (updateDto.longitude !== undefined && (updateDto.longitude as unknown) !== '') {
         updateDto.longitude = Number(updateDto.longitude);
       }
 
