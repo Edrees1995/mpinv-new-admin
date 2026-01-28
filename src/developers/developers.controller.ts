@@ -16,6 +16,19 @@ import type { Response } from 'express';
 import { DevelopersService } from './developers.service';
 import type { DeveloperFilters } from './developers.service';
 
+// HTML escape function to prevent XSS
+function escapeHtml(text: string | null | undefined): string {
+  if (!text) return '';
+  const htmlEntities: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
+  };
+  return String(text).replace(/[&<>"']/g, (char) => htmlEntities[char]);
+}
+
 @Controller('developers')
 export class DevelopersController {
   constructor(private readonly developersService: DevelopersService) {}
@@ -189,27 +202,32 @@ export class DevelopersController {
       `;
     } else {
       result.data.forEach((developer) => {
+        const safeName = escapeHtml(developer.name);
+        const safeLogo = escapeHtml(developer.logo);
+        const safeEmail = escapeHtml(developer.email);
+        const safePhone = escapeHtml(developer.phone);
+
         html += `
           <tr class="hover:bg-gray-50">
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center">
                 ${
                   developer.logo
-                    ? `<img src="${developer.logo}" alt="${developer.name}" class="w-10 h-10 rounded-lg object-cover mr-3">`
+                    ? `<img src="${safeLogo}" alt="${safeName}" class="w-10 h-10 rounded-lg object-cover mr-3">`
                     : `<div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
-                        <span class="text-purple-600 font-medium">${developer.name.charAt(0)}</span>
+                        <span class="text-purple-600 font-medium">${escapeHtml(developer.name?.charAt(0))}</span>
                       </div>`
                 }
                 <div>
-                  <a href="/developers/${developer.id}" class="font-medium text-gray-900 hover:text-purple-600">${developer.name}</a>
+                  <a href="/developers/${developer.id}" class="font-medium text-gray-900 hover:text-purple-600">${safeName}</a>
                 </div>
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              ${developer.email || '-'}
+              ${safeEmail || '-'}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              ${developer.phone || '-'}
+              ${safePhone || '-'}
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <span class="px-2 py-1 text-xs font-medium rounded-full ${
@@ -247,7 +265,7 @@ export class DevelopersController {
                 </a>
                 <button
                   hx-delete="/developers/${developer.id}"
-                  hx-confirm="Are you sure you want to delete ${developer.name}?"
+                  hx-confirm="Are you sure you want to delete ${safeName}?"
                   class="text-red-600 hover:text-red-800"
                   title="Delete"
                 >
