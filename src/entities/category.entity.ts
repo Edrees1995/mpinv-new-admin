@@ -2,47 +2,34 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
 } from 'typeorm';
-import { Subcategory } from './subcategory.entity';
 
 @Entity('mw_category')
 export class Category {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'category_id' })
   id: number;
 
-  @Column({ length: 255 })
+  @Column({ name: 'section_id', nullable: true })
+  section_id: number;
+
+  @Column({ name: 'category_name', length: 250 })
   name: string;
 
-  @Column({ length: 255, nullable: true })
+  @Column({ name: 'short_name', length: 3, nullable: true })
+  short_name: string;
+
+  @Column({ name: 'listing_type', length: 1, nullable: true })
+  listing_type: string;
+
+  @Column({ length: 250 })
   slug: string;
 
-  @Column({ length: 255, nullable: true })
+  @Column({ type: 'enum', enum: ['A', 'I'], default: 'A' })
+  status: string;
+
+  @Column({ name: 'isTrash', type: 'enum', enum: ['0', '1'], default: '0' })
+  is_trash: string;
+
+  @Column({ length: 50, nullable: true })
   icon: string;
-
-  @Column({ type: 'text', nullable: true })
-  description: string;
-
-  @Column({ type: 'tinyint', default: 1 })
-  status: number;
-
-  @Column({ type: 'int', default: 0 })
-  sort_order: number;
-
-  @Column({ length: 255, nullable: true })
-  meta_title: string;
-
-  @Column({ type: 'text', nullable: true })
-  meta_description: string;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
-
-  @OneToMany(() => Subcategory, (subcategory) => subcategory.category)
-  subcategories: Subcategory[];
 }

@@ -86,18 +86,6 @@ export class SubCommunitiesController {
       if (createDto.community_id) {
         createDto.community_id = Number(createDto.community_id);
       }
-      if (createDto.status !== undefined) {
-        createDto.status = Number(createDto.status);
-      }
-      if (createDto.sort_order !== undefined) {
-        createDto.sort_order = Number(createDto.sort_order);
-      }
-      if (createDto.latitude !== undefined && (createDto.latitude as unknown) !== '') {
-        createDto.latitude = Number(createDto.latitude);
-      }
-      if (createDto.longitude !== undefined && (createDto.longitude as unknown) !== '') {
-        createDto.longitude = Number(createDto.longitude);
-      }
 
       await this.subCommunitiesService.create(createDto);
       return res.redirect(
@@ -144,18 +132,6 @@ export class SubCommunitiesController {
       // Parse numeric values
       if (updateDto.community_id) {
         updateDto.community_id = Number(updateDto.community_id);
-      }
-      if (updateDto.status !== undefined) {
-        updateDto.status = Number(updateDto.status);
-      }
-      if (updateDto.sort_order !== undefined) {
-        updateDto.sort_order = Number(updateDto.sort_order);
-      }
-      if (updateDto.latitude !== undefined && (updateDto.latitude as unknown) !== '') {
-        updateDto.latitude = Number(updateDto.latitude);
-      }
-      if (updateDto.longitude !== undefined && (updateDto.longitude as unknown) !== '') {
-        updateDto.longitude = Number(updateDto.longitude);
       }
 
       await this.subCommunitiesService.update(id, updateDto);

@@ -15,14 +15,6 @@ export interface CreateSubCommunityDto {
   name: string;
   slug?: string;
   community_id: number;
-  description?: string;
-  image?: string;
-  latitude?: number;
-  longitude?: number;
-  status?: number;
-  sort_order?: number;
-  meta_title?: string;
-  meta_description?: string;
 }
 
 export interface UpdateSubCommunityDto extends Partial<CreateSubCommunityDto> {}
@@ -61,8 +53,7 @@ export class SubCommunitiesService {
     }
 
     queryBuilder
-      .orderBy('subCommunity.sort_order', 'ASC')
-      .addOrderBy('subCommunity.name', 'ASC')
+      .orderBy('subCommunity.name', 'ASC')
       .skip(skip)
       .take(limit);
 
@@ -106,14 +97,6 @@ export class SubCommunitiesService {
       name: createDto.name,
       slug: createDto.slug || this.generateSlug(createDto.name),
       community_id: createDto.community_id,
-      description: createDto.description,
-      image: createDto.image,
-      latitude: createDto.latitude,
-      longitude: createDto.longitude,
-      status: createDto.status ?? 1,
-      sort_order: createDto.sort_order ?? 0,
-      meta_title: createDto.meta_title,
-      meta_description: createDto.meta_description,
     });
 
     return this.subCommunityRepository.save(subCommunity);

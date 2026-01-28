@@ -142,7 +142,7 @@ export class CommunitiesService {
   async getSubCommunities(communityId: number): Promise<SubCommunity[]> {
     return this.subCommunityRepository.find({
       where: { community_id: communityId },
-      order: { sort_order: 'ASC', name: 'ASC' },
+      order: { name: 'ASC' },
     });
   }
 
