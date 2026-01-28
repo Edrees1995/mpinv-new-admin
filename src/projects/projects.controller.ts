@@ -16,6 +16,19 @@ import type { Response } from 'express';
 import { ProjectsService } from './projects.service';
 import type { CreateProjectDto, UpdateProjectDto } from './projects.service';
 
+// HTML escape function to prevent XSS
+function escapeHtml(text: string | null | undefined): string {
+  if (!text) return '';
+  const htmlEntities: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
+  };
+  return String(text).replace(/[&<>"']/g, (char) => htmlEntities[char]);
+}
+
 @Controller('projects')
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
@@ -207,20 +220,24 @@ export class ProjectsController {
     // Return just the table rows for HTMX updates
     let html = '';
     for (const project of result.data) {
+      const safeName = escapeHtml(project.name);
+      const safeImage = escapeHtml(project.featured_image);
+      const safeDeveloperName = escapeHtml(project.developer?.name);
+
       html += `
         <tr class="hover:bg-gray-50">
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="flex items-center">
               <div class="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-                ${project.featured_image ? `<img src="${project.featured_image}" alt="${project.name}" class="w-full h-full object-cover">` : ''}
+                ${project.featured_image ? `<img src="${safeImage}" alt="${safeName}" class="w-full h-full object-cover">` : ''}
               </div>
               <div class="ml-4">
-                <div class="text-sm font-medium text-gray-900">${project.name}</div>
+                <div class="text-sm font-medium text-gray-900">${safeName}</div>
               </div>
             </div>
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
-            <span class="text-sm text-gray-600">${project.developer?.name || 'N/A'}</span>
+            <span class="text-sm text-gray-600">${safeDeveloperName || 'N/A'}</span>
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
             <span class="px-2 py-1 text-xs font-medium rounded-full ${
@@ -239,7 +256,7 @@ export class ProjectsController {
             <a href="/projects/${project.id}/edit" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
             <button
               hx-delete="/projects/${project.id}"
-              hx-confirm="Are you sure you want to delete this project?"
+              hx-confirm="Are you sure you want to delete ${safeName}?"
               hx-target="closest tr"
               hx-swap="outerHTML"
               class="text-red-600 hover:text-red-900"
