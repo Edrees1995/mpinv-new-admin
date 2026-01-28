@@ -206,6 +206,163 @@
             <pre class="bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto text-gray-700">{{json highlightsData}}</pre>
         </div>
         {{/if}}
+
+        <!-- Classification -->
+        {{#if (or project.category project.subcategory project.type_of_project project.off_plan project.listing_type)}}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Classification</h2>
+            <dl class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {{#if project.category}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Category</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.category.name}}</dd>
+                </div>
+                {{/if}}
+                {{#if project.subcategory}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Sub Category</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.subcategory.name}}</dd>
+                </div>
+                {{/if}}
+                {{#if project.type_of_project}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Type of Project</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.type_of_project}}</dd>
+                </div>
+                {{/if}}
+                {{#if project.off_plan}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Off Plan</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.off_plan}}</dd>
+                </div>
+                {{/if}}
+                {{#if project.listing_type}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Listing Type</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.listing_type}}</dd>
+                </div>
+                {{/if}}
+            </dl>
+        </div>
+        {{/if}}
+
+        <!-- Payment Plan -->
+        {{#if (or project.pay_plan project.payment_plan)}}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Payment Plan</h2>
+            {{#if project.pay_plan}}
+            <div class="mb-4">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                    {{project.pay_plan}}
+                </span>
+            </div>
+            {{/if}}
+            {{#if paymentPlanData}}
+            <pre class="bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto text-gray-700">{{json paymentPlanData}}</pre>
+            {{else if project.payment_plan}}
+            <p class="text-sm text-gray-600 whitespace-pre-line">{{project.payment_plan}}</p>
+            {{/if}}
+        </div>
+        {{/if}}
+
+        <!-- Agent Information -->
+        {{#if (or project.agent_name project.agent_phone project.agent_email project.mobile_number)}}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Agent Information</h2>
+            <div class="flex items-start gap-4">
+                {{#if project.agent_logo}}
+                <img src="{{project.agent_logo}}" alt="Agent Logo" class="w-16 h-16 object-contain rounded-lg border border-gray-200">
+                {{/if}}
+                <dl class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
+                    {{#if project.agent_name}}
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Agent Name</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{project.agent_name}}</dd>
+                    </div>
+                    {{/if}}
+                    {{#if project.agent_phone}}
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Phone</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{project.agent_phone}}</dd>
+                    </div>
+                    {{/if}}
+                    {{#if project.agent_email}}
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Email</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{project.agent_email}}</dd>
+                    </div>
+                    {{/if}}
+                    {{#if project.mobile_number}}
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Mobile</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{project.mobile_number}}</dd>
+                    </div>
+                    {{/if}}
+                </dl>
+            </div>
+        </div>
+        {{/if}}
+
+        <!-- Background / Slider Images -->
+        {{#if (or project.bg_img project.bg_img_mobile project.d_right project.bg_attachment1 project.bg_attachment2)}}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Background / Slider Images</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {{#if project.bg_img}}
+                <div>
+                    <p class="text-xs text-gray-500 mb-1">Background Image</p>
+                    <img src="{{project.bg_img}}" alt="BG Image" class="w-full h-32 object-cover rounded-lg border border-gray-200" onerror="this.style.display='none'">
+                </div>
+                {{/if}}
+                {{#if project.bg_img_mobile}}
+                <div>
+                    <p class="text-xs text-gray-500 mb-1">BG Image (Mobile)</p>
+                    <img src="{{project.bg_img_mobile}}" alt="BG Mobile" class="w-full h-32 object-cover rounded-lg border border-gray-200" onerror="this.style.display='none'">
+                </div>
+                {{/if}}
+                {{#if project.d_right}}
+                <div>
+                    <p class="text-xs text-gray-500 mb-1">D Right</p>
+                    <img src="{{project.d_right}}" alt="D Right" class="w-full h-32 object-cover rounded-lg border border-gray-200" onerror="this.style.display='none'">
+                </div>
+                {{/if}}
+                {{#if project.bg_attachment1}}
+                <div>
+                    <p class="text-xs text-gray-500 mb-1">BG Attachment 1</p>
+                    <img src="{{project.bg_attachment1}}" alt="BG Attachment 1" class="w-full h-32 object-cover rounded-lg border border-gray-200" onerror="this.style.display='none'">
+                </div>
+                {{/if}}
+                {{#if project.bg_attachment2}}
+                <div>
+                    <p class="text-xs text-gray-500 mb-1">BG Attachment 2</p>
+                    <img src="{{project.bg_attachment2}}" alt="BG Attachment 2" class="w-full h-32 object-cover rounded-lg border border-gray-200" onerror="this.style.display='none'">
+                </div>
+                {{/if}}
+            </div>
+            {{#if (or project.sliding project.home_sliding project.caption)}}
+            <dl class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                {{#if project.sliding}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Sliding</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{#if (eq project.sliding "1")}}Yes{{else}}No{{/if}}</dd>
+                </div>
+                {{/if}}
+                {{#if project.home_sliding}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Home Sliding</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{#if (eq project.home_sliding "1")}}Yes{{else}}No{{/if}}</dd>
+                </div>
+                {{/if}}
+                {{#if project.caption}}
+                <div class="col-span-2 md:col-span-3">
+                    <dt class="text-sm font-medium text-gray-500">Caption</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.caption}}</dd>
+                </div>
+                {{/if}}
+            </dl>
+            {{/if}}
+        </div>
+        {{/if}}
     </div>
 
     <!-- Sidebar -->
@@ -278,6 +435,48 @@
                     <dd class="mt-1 text-sm text-gray-900">{{project.completion_year}}</dd>
                 </div>
                 {{/if}}
+                {{#if project.sale_status}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Sale Status</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.sale_status}}</dd>
+                </div>
+                {{/if}}
+                {{#if project.launch_date}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Launch Date</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.launch_date}}</dd>
+                </div>
+                {{/if}}
+                {{#if project.possession}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Possession</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.possession}}</dd>
+                </div>
+                {{/if}}
+                {{#if project.completion_date}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Completion Date</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.completion_date}}</dd>
+                </div>
+                {{/if}}
+                {{#if project.parking}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Parking</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.parking}}</dd>
+                </div>
+                {{/if}}
+                {{#if project.furnished}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Furnished</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.furnished}}</dd>
+                </div>
+                {{/if}}
+                {{#if project.subCommunity}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Sub Community</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.subCommunity.name}}</dd>
+                </div>
+                {{/if}}
                 <div>
                     <dt class="text-sm font-medium text-gray-500">Project ID</dt>
                     <dd class="mt-1 text-sm text-gray-900">#{{project.id}}</dd>
@@ -310,6 +509,74 @@
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Developer</h2>
             <img src="{{project.developer_logo}}" alt="Developer Logo" class="max-h-20 mx-auto">
+        </div>
+        {{/if}}
+
+        <!-- Registration & Legal -->
+        {{#if (or project.rera project.ref_no project.ded project.brn project.qr)}}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Registration & Legal</h2>
+            <dl class="space-y-3">
+                {{#if project.rera}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">RERA</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.rera}}</dd>
+                </div>
+                {{/if}}
+                {{#if project.ref_no}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Ref No</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.ref_no}}</dd>
+                </div>
+                {{/if}}
+                {{#if project.ded}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">DED</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.ded}}</dd>
+                </div>
+                {{/if}}
+                {{#if project.brn}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">BRN</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.brn}}</dd>
+                </div>
+                {{/if}}
+                {{#if project.qr}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">QR Code</dt>
+                    <dd class="mt-1">
+                        <img src="{{project.qr}}" alt="QR Code" class="h-24 w-24 object-contain" onerror="this.style.display='none'">
+                    </dd>
+                </div>
+                {{/if}}
+            </dl>
+        </div>
+        {{/if}}
+
+        <!-- SEO -->
+        {{#if (or project.meta_title project.meta_description project.meta_keywords)}}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">SEO</h2>
+            <dl class="space-y-3">
+                {{#if project.meta_title}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Meta Title</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.meta_title}}</dd>
+                </div>
+                {{/if}}
+                {{#if project.meta_description}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Meta Description</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.meta_description}}</dd>
+                </div>
+                {{/if}}
+                {{#if project.meta_keywords}}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Meta Keywords</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{project.meta_keywords}}</dd>
+                </div>
+                {{/if}}
+            </dl>
         </div>
         {{/if}}
 

@@ -44,86 +44,399 @@
             <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
                 <h2 class="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
                 <div class="space-y-4">
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
-                            Project Name <span class="text-red-500">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                            placeholder="Enter project name"
-                        >
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
+                                Project Name <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="name" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Enter project name">
+                        </div>
+                        <div>
+                            <label for="slug" class="block text-sm font-medium text-gray-700 mb-1">Slug</label>
+                            <input type="text" id="slug" name="slug" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="project-url-slug">
+                        </div>
                     </div>
                     <div>
-                        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">
-                            Description
-                        </label>
-                        <textarea
-                            id="description"
-                            name="description"
-                            rows="6"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                            placeholder="Enter project description (HTML allowed)"
-                        ></textarea>
-                        <p class="mt-1 text-xs text-gray-500">You can use HTML tags for formatting</p>
+                        <label for="short_description" class="block text-sm font-medium text-gray-700 mb-1">Short Description</label>
+                        <textarea id="short_description" name="short_description" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Brief summary"></textarea>
+                    </div>
+                    <div>
+                        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Full Description</label>
+                        <textarea id="description" name="description" rows="6" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Enter full project description"></textarea>
                     </div>
                 </div>
             </div>
 
-            <!-- Featured Image -->
+            <!-- Property Details -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Featured Image</h2>
-                <div>
-                    <label for="featured_image" class="block text-sm font-medium text-gray-700 mb-1">
-                        Image URL
-                    </label>
-                    <input
-                        type="url"
-                        id="featured_image"
-                        name="featured_image"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                        placeholder="https://example.com/image.jpg"
-                    >
-                    <p class="mt-1 text-xs text-gray-500">Enter the full URL of the featured image</p>
-                </div>
-                <div id="image-preview" class="mt-4 hidden">
-                    <img src="" alt="Preview" class="max-w-full h-48 object-cover rounded-lg">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Property Details</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                        <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Starting Price (AED)</label>
+                        <input type="number" id="price" name="price" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="0.00">
+                    </div>
+                    <div>
+                        <label for="bedrooms" class="block text-sm font-medium text-gray-700 mb-1">Bedrooms</label>
+                        <input type="text" id="bedrooms" name="bedrooms" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., 1-4">
+                    </div>
+                    <div>
+                        <label for="bathrooms" class="block text-sm font-medium text-gray-700 mb-1">Bathrooms</label>
+                        <input type="text" id="bathrooms" name="bathrooms" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., 1-3">
+                    </div>
+                    <div>
+                        <label for="no_of_units" class="block text-sm font-medium text-gray-700 mb-1">Number of Units</label>
+                        <input type="text" id="no_of_units" name="no_of_units" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., 500">
+                    </div>
+                    <div>
+                        <label for="size" class="block text-sm font-medium text-gray-700 mb-1">Size (sq.ft)</label>
+                        <input type="text" id="size" name="size" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., 500-2000">
+                    </div>
+                    <div>
+                        <label for="plot_size" class="block text-sm font-medium text-gray-700 mb-1">Plot Size</label>
+                        <input type="text" id="plot_size" name="plot_size" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="For villas">
+                    </div>
+                    <div>
+                        <label for="completion_year" class="block text-sm font-medium text-gray-700 mb-1">Completion Year</label>
+                        <input type="text" id="completion_year" name="completion_year" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., 2025">
+                    </div>
+                    <div>
+                        <label for="handover_date" class="block text-sm font-medium text-gray-700 mb-1">Handover Date</label>
+                        <input type="date" id="handover_date" name="handover_date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                    </div>
                 </div>
             </div>
 
-            <!-- Additional Data -->
+            <!-- Location -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Additional Data</h2>
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Location</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="community_id" class="block text-sm font-medium text-gray-700 mb-1">Community</label>
+                        <select id="community_id" name="community_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="">Select Community</option>
+                            {{#each communities}}
+                            <option value="{{this.community_id}}">{{this.name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="sub_community_id" class="block text-sm font-medium text-gray-700 mb-1">Sub Community</label>
+                        <select id="sub_community_id" name="sub_community_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="">Select Sub Community</option>
+                            {{#each subCommunities}}
+                            <option value="{{this.id}}">{{this.name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="property_name" class="block text-sm font-medium text-gray-700 mb-1">Property/Building Name</label>
+                        <input type="text" id="property_name" name="property_name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Building name">
+                    </div>
+                    <div>
+                        <label for="latitude" class="block text-sm font-medium text-gray-700 mb-1">Latitude</label>
+                        <input type="text" id="latitude" name="latitude" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., 24.4539">
+                    </div>
+                    <div>
+                        <label for="longitude" class="block text-sm font-medium text-gray-700 mb-1">Longitude</label>
+                        <input type="text" id="longitude" name="longitude" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., 54.3773">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Images & Media -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Images & Media</h2>
                 <div class="space-y-4">
                     <div>
-                        <label for="list" class="block text-sm font-medium text-gray-700 mb-1">
-                            List Data (JSON)
-                        </label>
-                        <textarea
-                            id="list"
-                            name="list"
-                            rows="4"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 font-mono text-sm"
-                            placeholder='{"key": "value"}'
-                        ></textarea>
-                        <p class="mt-1 text-xs text-gray-500">Enter valid JSON data</p>
+                        <label for="featured_image" class="block text-sm font-medium text-gray-700 mb-1">Featured Image URL</label>
+                        <input type="text" id="featured_image" name="featured_image" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="https://example.com/image.jpg">
+                    </div>
+                    <div id="image-preview" class="hidden">
+                        <img src="" alt="Preview" class="max-w-full h-48 object-cover rounded-lg">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="youtube_url" class="block text-sm font-medium text-gray-700 mb-1">YouTube URL</label>
+                            <input type="url" id="youtube_url" name="youtube_url" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="https://youtube.com/watch?v=...">
+                        </div>
+                        <div>
+                            <label for="video_link" class="block text-sm font-medium text-gray-700 mb-1">Video Link</label>
+                            <input type="url" id="video_link" name="video_link" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="https://vimeo.com/...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Classification -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Classification</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                        <label for="category_id" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <select id="category_id" name="category_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="">Select Category</option>
+                            {{#each categories}}
+                            <option value="{{this.id}}">{{this.name}}</option>
+                            {{/each}}
+                        </select>
                     </div>
                     <div>
-                        <label for="property" class="block text-sm font-medium text-gray-700 mb-1">
-                            Property Data (JSON)
-                        </label>
-                        <textarea
-                            id="property"
-                            name="property"
-                            rows="4"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 font-mono text-sm"
-                            placeholder='{"key": "value"}'
-                        ></textarea>
-                        <p class="mt-1 text-xs text-gray-500">Enter valid JSON data</p>
+                        <label for="sub_category_id" class="block text-sm font-medium text-gray-700 mb-1">Sub Category</label>
+                        <select id="sub_category_id" name="sub_category_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="">Select Sub Category</option>
+                            {{#each subcategories}}
+                            <option value="{{this.id}}">{{this.name}}</option>
+                            {{/each}}
+                        </select>
                     </div>
+                    <div>
+                        <label for="type_of_project" class="block text-sm font-medium text-gray-700 mb-1">Type of Project</label>
+                        <input type="text" id="type_of_project" name="type_of_project" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., Residential">
+                    </div>
+                    <div>
+                        <label for="off_plan" class="block text-sm font-medium text-gray-700 mb-1">Off Plan</label>
+                        <input type="text" id="off_plan" name="off_plan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., Yes">
+                    </div>
+                    <div>
+                        <label for="listing_type" class="block text-sm font-medium text-gray-700 mb-1">Listing Type</label>
+                        <input type="text" id="listing_type" name="listing_type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., Sale">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline & Sales -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Timeline & Sales</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                        <label for="launch_date" class="block text-sm font-medium text-gray-700 mb-1">Launch Date</label>
+                        <input type="text" id="launch_date" name="launch_date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., Q1 2025">
+                    </div>
+                    <div>
+                        <label for="possession" class="block text-sm font-medium text-gray-700 mb-1">Possession</label>
+                        <input type="text" id="possession" name="possession" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., Q4 2027">
+                    </div>
+                    <div>
+                        <label for="completion_date" class="block text-sm font-medium text-gray-700 mb-1">Completion Date</label>
+                        <input type="text" id="completion_date" name="completion_date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., December 2027">
+                    </div>
+                    <div>
+                        <label for="sale_status" class="block text-sm font-medium text-gray-700 mb-1">Sale Status</label>
+                        <input type="text" id="sale_status" name="sale_status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., Available">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Plan -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Payment Plan</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="pay_plan" class="block text-sm font-medium text-gray-700 mb-1">Payment Plan Label</label>
+                        <input type="text" id="pay_plan" name="pay_plan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., 50/50">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="payment_plan" class="block text-sm font-medium text-gray-700 mb-1">Payment Plan Details (JSON)</label>
+                        <textarea id="payment_plan" name="payment_plan" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 font-mono text-sm" placeholder='[{"milestone": "On Booking", "percent": "10%"}]'></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agent Information -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Agent Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="agent_name" class="block text-sm font-medium text-gray-700 mb-1">Agent Name</label>
+                        <input type="text" id="agent_name" name="agent_name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Agent name">
+                    </div>
+                    <div>
+                        <label for="agent_phone" class="block text-sm font-medium text-gray-700 mb-1">Agent Phone</label>
+                        <input type="text" id="agent_phone" name="agent_phone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="+971 XX XXX XXXX">
+                    </div>
+                    <div>
+                        <label for="agent_email" class="block text-sm font-medium text-gray-700 mb-1">Agent Email</label>
+                        <input type="email" id="agent_email" name="agent_email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="agent@example.com">
+                    </div>
+                    <div>
+                        <label for="mobile_number" class="block text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
+                        <input type="text" id="mobile_number" name="mobile_number" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="+971 XX XXX XXXX">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="agent_logo" class="block text-sm font-medium text-gray-700 mb-1">Agent Logo URL</label>
+                        <input type="text" id="agent_logo" name="agent_logo" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="URL or filename">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Registration & Legal -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Registration & Legal</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                        <label for="rera" class="block text-sm font-medium text-gray-700 mb-1">RERA</label>
+                        <input type="text" id="rera" name="rera" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="RERA number">
+                    </div>
+                    <div>
+                        <label for="ref_no" class="block text-sm font-medium text-gray-700 mb-1">Ref No</label>
+                        <input type="text" id="ref_no" name="ref_no" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Reference number">
+                    </div>
+                    <div>
+                        <label for="ded" class="block text-sm font-medium text-gray-700 mb-1">DED</label>
+                        <input type="text" id="ded" name="ded" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="DED number">
+                    </div>
+                    <div>
+                        <label for="brn" class="block text-sm font-medium text-gray-700 mb-1">BRN</label>
+                        <input type="text" id="brn" name="brn" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="BRN number">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="qr" class="block text-sm font-medium text-gray-700 mb-1">QR Code URL</label>
+                        <input type="text" id="qr" name="qr" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="URL or filename">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEO -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">SEO</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label for="meta_title" class="block text-sm font-medium text-gray-700 mb-1">Meta Title</label>
+                        <input type="text" id="meta_title" name="meta_title" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="SEO title">
+                    </div>
+                    <div>
+                        <label for="meta_description" class="block text-sm font-medium text-gray-700 mb-1">Meta Description</label>
+                        <textarea id="meta_description" name="meta_description" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="SEO description"></textarea>
+                    </div>
+                    <div>
+                        <label for="meta_keywords" class="block text-sm font-medium text-gray-700 mb-1">Meta Keywords</label>
+                        <textarea id="meta_keywords" name="meta_keywords" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="keyword1, keyword2"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Background / Slider Images -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Background / Slider Images</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="bg_img" class="block text-sm font-medium text-gray-700 mb-1">Background Image</label>
+                        <input type="text" id="bg_img" name="bg_img" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="URL or filename">
+                    </div>
+                    <div>
+                        <label for="bg_img_mobile" class="block text-sm font-medium text-gray-700 mb-1">BG Image (Mobile)</label>
+                        <input type="text" id="bg_img_mobile" name="bg_img_mobile" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="URL or filename">
+                    </div>
+                    <div>
+                        <label for="d_right" class="block text-sm font-medium text-gray-700 mb-1">D Right Image</label>
+                        <input type="text" id="d_right" name="d_right" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="URL or filename">
+                    </div>
+                    <div>
+                        <label for="bg_attachment1" class="block text-sm font-medium text-gray-700 mb-1">BG Attachment 1</label>
+                        <input type="text" id="bg_attachment1" name="bg_attachment1" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="URL or filename">
+                    </div>
+                    <div>
+                        <label for="bg_attachment2" class="block text-sm font-medium text-gray-700 mb-1">BG Attachment 2</label>
+                        <input type="text" id="bg_attachment2" name="bg_attachment2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="URL or filename">
+                    </div>
+                    <div>
+                        <label for="caption" class="block text-sm font-medium text-gray-700 mb-1">Caption</label>
+                        <input type="text" id="caption" name="caption" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Slider caption">
+                    </div>
+                    <div>
+                        <label for="sliding" class="block text-sm font-medium text-gray-700 mb-1">Sliding</label>
+                        <select id="sliding" name="sliding" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="">Not Set</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="home_sliding" class="block text-sm font-medium text-gray-700 mb-1">Home Sliding</label>
+                        <select id="home_sliding" name="home_sliding" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="">Not Set</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Details -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Additional Details</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                        <label for="parking" class="block text-sm font-medium text-gray-700 mb-1">Parking</label>
+                        <input type="text" id="parking" name="parking" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., Yes, 2 spaces">
+                    </div>
+                    <div>
+                        <label for="furnished" class="block text-sm font-medium text-gray-700 mb-1">Furnished</label>
+                        <input type="text" id="furnished" name="furnished" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., Furnished">
+                    </div>
+                    <div>
+                        <label for="currency_abr" class="block text-sm font-medium text-gray-700 mb-1">Currency</label>
+                        <input type="text" id="currency_abr" name="currency_abr" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., AED">
+                    </div>
+                    <div>
+                        <label for="area_measurement" class="block text-sm font-medium text-gray-700 mb-1">Area Measurement</label>
+                        <input type="text" id="area_measurement" name="area_measurement" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., sq.ft">
+                    </div>
+                    <div>
+                        <label for="area_unit" class="block text-sm font-medium text-gray-700 mb-1">Area Unit</label>
+                        <input type="text" id="area_unit" name="area_unit" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., sqft">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Documents</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="floor_pdf" class="block text-sm font-medium text-gray-700 mb-1">Floor Plan PDF</label>
+                        <input type="text" id="floor_pdf" name="floor_pdf" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="URL or filename">
+                    </div>
+                    <div>
+                        <label for="payment_pdf" class="block text-sm font-medium text-gray-700 mb-1">Payment Plan PDF</label>
+                        <input type="text" id="payment_pdf" name="payment_pdf" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="URL or filename">
+                    </div>
+                    <div>
+                        <label for="brochure" class="block text-sm font-medium text-gray-700 mb-1">Brochure PDF</label>
+                        <input type="text" id="brochure" name="brochure" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="URL or filename">
+                    </div>
+                    <div>
+                        <label for="brochure_link" class="block text-sm font-medium text-gray-700 mb-1">Online Brochure Link</label>
+                        <input type="url" id="brochure_link" name="brochure_link" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="https://...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Developer Info -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Developer Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="developer_name" class="block text-sm font-medium text-gray-700 mb-1">Developer Name (override)</label>
+                        <input type="text" id="developer_name" name="developer_name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Custom developer name">
+                    </div>
+                    <div>
+                        <label for="developer_logo" class="block text-sm font-medium text-gray-700 mb-1">Developer Logo URL</label>
+                        <input type="text" id="developer_logo" name="developer_logo" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="URL or filename">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="developer_description" class="block text-sm font-medium text-gray-700 mb-1">Developer Description</label>
+                        <textarea id="developer_description" name="developer_description" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="About the developer"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Highlights -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Project Highlights</h2>
+                <div>
+                    <label for="highlights" class="block text-sm font-medium text-gray-700 mb-1">Highlights (JSON)</label>
+                    <textarea id="highlights" name="highlights" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 font-mono text-sm" placeholder='["Feature 1", "Feature 2"]'></textarea>
                 </div>
             </div>
         </div>
@@ -138,25 +451,31 @@
                         <label for="status" class="block text-sm font-medium text-gray-700 mb-1">
                             Status <span class="text-red-500">*</span>
                         </label>
-                        <select
-                            id="status"
-                            name="status"
-                            required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                        >
+                        <select id="status" name="status" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
                             <option value="A">Active</option>
                             <option value="I">Inactive</option>
                         </select>
                     </div>
                     <div>
-                        <label for="developer_id" class="block text-sm font-medium text-gray-700 mb-1">
-                            Developer
-                        </label>
-                        <select
-                            id="developer_id"
-                            name="developer_id"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                        >
+                        <label for="featured" class="block text-sm font-medium text-gray-700 mb-1">Featured</label>
+                        <select id="featured" name="featured" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="N">No</option>
+                            <option value="Y">Yes</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="project_status" class="block text-sm font-medium text-gray-700 mb-1">Project Status</label>
+                        <select id="project_status" name="project_status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="">Select Status</option>
+                            <option value="Off Plan">Off Plan</option>
+                            <option value="Under Construction">Under Construction</option>
+                            <option value="Ready">Ready</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="developer_id" class="block text-sm font-medium text-gray-700 mb-1">Developer</label>
+                        <select id="developer_id" name="developer_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
                             <option value="">Select Developer</option>
                             {{#each developers}}
                             <option value="{{this.id}}">{{this.name}}</option>
@@ -165,10 +484,7 @@
                     </div>
                 </div>
                 <div class="mt-6 pt-4 border-t border-gray-200">
-                    <button
-                        type="submit"
-                        class="w-full flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                    >
+                    <button type="submit" class="w-full flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>
@@ -182,8 +498,8 @@
                 <h3 class="text-sm font-medium text-blue-800 mb-2">Tips</h3>
                 <ul class="text-sm text-blue-700 space-y-1">
                     <li>- Project name is required</li>
-                    <li>- Use HTML in description for formatting</li>
-                    <li>- Image URL must be a valid URL</li>
+                    <li>- Slug will auto-generate if left blank</li>
+                    <li>- All other fields are optional</li>
                     <li>- JSON fields must contain valid JSON</li>
                 </ul>
             </div>

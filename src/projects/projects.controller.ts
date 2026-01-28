@@ -106,13 +106,79 @@ export class ProjectsController {
   @Get('create')
   @Render('projects/create')
   async createForm() {
-    const developers = await this.projectsService.getAllDevelopers();
-    const communities = await this.projectsService.getAllCommunities();
+    const [developers, communities, subCommunities, categories, subcategories] = await Promise.all([
+      this.projectsService.getAllDevelopers(),
+      this.projectsService.getAllCommunities(),
+      this.projectsService.getAllSubCommunities(),
+      this.projectsService.getAllCategories(),
+      this.projectsService.getAllSubcategories(),
+    ]);
 
     return {
       title: 'Create Project',
       developers,
       communities,
+      subCommunities,
+      categories,
+      subcategories,
+    };
+  }
+
+  @Get('verify')
+  @Render('projects/verify')
+  async verify(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const pageNum = parseInt(page || '1', 10);
+    const limitNum = parseInt(limit || '10', 10);
+    const result = await this.projectsService.findAll(pageNum, limitNum);
+
+    // Calculate field completeness for each project
+    const fieldsToCheck = [
+      'name', 'slug', 'description', 'featured_image', 'price', 'bedrooms', 'bathrooms',
+      'size', 'developer_id', 'community_id', 'sub_community_id', 'latitude', 'longitude',
+      'handover_date', 'completion_year', 'project_status', 'category_id', 'sub_category_id',
+      'type_of_project', 'off_plan', 'listing_type', 'launch_date', 'possession',
+      'completion_date', 'sale_status', 'pay_plan', 'payment_plan', 'rera', 'ref_no',
+      'agent_name', 'agent_phone', 'agent_email', 'meta_title', 'meta_description',
+      'bg_img', 'parking', 'furnished',
+    ];
+
+    const projectsWithCompleteness = result.data.map((project: any) => {
+      let filled = 0;
+      for (const field of fieldsToCheck) {
+        if (project[field] !== null && project[field] !== undefined && project[field] !== '') {
+          filled++;
+        }
+      }
+      const completeness = Math.round((filled / fieldsToCheck.length) * 100);
+      return { ...project, completeness };
+    });
+
+    return {
+      title: 'Verify Projects',
+      projects: projectsWithCompleteness,
+      pagination: {
+        page: result.page,
+        limit: result.limit,
+        total: result.total,
+        totalPages: result.totalPages,
+        hasNext: result.page < result.totalPages,
+        hasPrev: result.page > 1,
+      },
+    };
+  }
+
+  @Get(':id/compare')
+  @Render('projects/compare')
+  async compare(@Param('id', ParseIntPipe) id: number) {
+    const project = await this.projectsService.findOne(id);
+
+    return {
+      title: `Compare: ${project.name}`,
+      project,
+      slug: project.slug,
     };
   }
 
@@ -131,25 +197,44 @@ export class ProjectsController {
       highlightsData = project.highlights;
     }
 
+    // Parse payment_plan JSON if exists
+    let paymentPlanData: unknown = null;
+    try {
+      if (project.payment_plan) {
+        paymentPlanData = JSON.parse(project.payment_plan);
+      }
+    } catch {
+      paymentPlanData = project.payment_plan;
+    }
+
     return {
       title: project.name,
       project,
       highlightsData,
+      paymentPlanData,
     };
   }
 
   @Get(':id/edit')
   @Render('projects/edit')
   async editForm(@Param('id', ParseIntPipe) id: number) {
-    const project = await this.projectsService.findOne(id);
-    const developers = await this.projectsService.getAllDevelopers();
-    const communities = await this.projectsService.getAllCommunities();
+    const [project, developers, communities, subCommunities, categories, subcategories] = await Promise.all([
+      this.projectsService.findOne(id),
+      this.projectsService.getAllDevelopers(),
+      this.projectsService.getAllCommunities(),
+      this.projectsService.getAllSubCommunities(),
+      this.projectsService.getAllCategories(),
+      this.projectsService.getAllSubcategories(),
+    ]);
 
     return {
       title: `Edit ${project.name}`,
       project,
       developers,
       communities,
+      subCommunities,
+      categories,
+      subcategories,
     };
   }
 

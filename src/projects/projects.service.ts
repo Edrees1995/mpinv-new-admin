@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { OffplanProject, Developer, Community, AdImage, AdPropertyType, AdFloorPlan, AdPaymentPlan } from '../entities';
+import { OffplanProject, Developer, Community, SubCommunity, Category, Subcategory, AdImage, AdPropertyType, AdFloorPlan, AdPaymentPlan } from '../entities';
 
 // Base URL for images stored in the old admin panel
 const IMAGE_BASE_URL = 'https://admin.mpinv.cloud/uploads/ads/';
@@ -30,6 +30,7 @@ export interface CreateProjectDto {
   developer_id?: number;
   developer_name?: string;
   community_id?: number;
+  sub_community_id?: number;
   handover_date?: Date;
   completion_year?: string;
   project_status?: string;
@@ -37,6 +38,51 @@ export interface CreateProjectDto {
   highlights?: string;
   status?: string;
   featured?: string;
+  // Category / Classification
+  category_id?: number;
+  sub_category_id?: number;
+  type_of_project?: string;
+  off_plan?: string;
+  listing_type?: string;
+  // Timeline / Sales
+  launch_date?: string;
+  possession?: string;
+  completion_date?: string;
+  sale_status?: string;
+  // Payment Plan
+  pay_plan?: string;
+  payment_plan?: string;
+  // Registration / Legal
+  rera?: string;
+  ref_no?: string;
+  ded?: string;
+  brn?: string;
+  qr?: string;
+  // Agent Info
+  agent_name?: string;
+  agent_phone?: string;
+  agent_email?: string;
+  agent_logo?: string;
+  mobile_number?: string;
+  // SEO
+  meta_title?: string;
+  meta_keywords?: string;
+  meta_description?: string;
+  // Slider / Background Images
+  bg_img?: string;
+  bg_img_mobile?: string;
+  sliding?: string;
+  home_sliding?: string;
+  caption?: string;
+  d_right?: string;
+  bg_attachment1?: string;
+  bg_attachment2?: string;
+  // Additional Details
+  parking?: string;
+  furnished?: string;
+  currency_abr?: string;
+  area_measurement?: string;
+  area_unit?: string;
 }
 
 export interface UpdateProjectDto extends Partial<CreateProjectDto> {}
@@ -50,6 +96,12 @@ export class ProjectsService {
     private developerRepository: Repository<Developer>,
     @InjectRepository(Community)
     private communityRepository: Repository<Community>,
+    @InjectRepository(SubCommunity)
+    private subCommunityRepository: Repository<SubCommunity>,
+    @InjectRepository(Category)
+    private categoryRepository: Repository<Category>,
+    @InjectRepository(Subcategory)
+    private subcategoryRepository: Repository<Subcategory>,
     @InjectRepository(AdImage)
     private adImageRepository: Repository<AdImage>,
     @InjectRepository(AdPropertyType)
@@ -80,6 +132,28 @@ export class ProjectsService {
     // Also transform developer logo if loaded via relation
     if (project.developer?.logo && !project.developer.logo.startsWith('http')) {
       project.developer.logo = IMAGE_BASE_URL + project.developer.logo;
+    }
+    // Transform new image fields
+    if (project.bg_img && !project.bg_img.startsWith('http')) {
+      project.bg_img = IMAGE_BASE_URL + project.bg_img;
+    }
+    if (project.bg_img_mobile && !project.bg_img_mobile.startsWith('http')) {
+      project.bg_img_mobile = IMAGE_BASE_URL + project.bg_img_mobile;
+    }
+    if (project.d_right && !project.d_right.startsWith('http')) {
+      project.d_right = IMAGE_BASE_URL + project.d_right;
+    }
+    if (project.bg_attachment1 && !project.bg_attachment1.startsWith('http')) {
+      project.bg_attachment1 = IMAGE_BASE_URL + project.bg_attachment1;
+    }
+    if (project.bg_attachment2 && !project.bg_attachment2.startsWith('http')) {
+      project.bg_attachment2 = IMAGE_BASE_URL + project.bg_attachment2;
+    }
+    if (project.agent_logo && !project.agent_logo.startsWith('http')) {
+      project.agent_logo = IMAGE_BASE_URL + project.agent_logo;
+    }
+    if (project.qr && !project.qr.startsWith('http')) {
+      project.qr = IMAGE_BASE_URL + project.qr;
     }
     // Transform gallery images
     if (project.images && project.images.length > 0) {
@@ -171,7 +245,7 @@ export class ProjectsService {
   async findOne(id: number): Promise<OffplanProject> {
     const project = await this.projectRepository.findOne({
       where: { id, section_id: OFFPLAN_SECTION_ID },
-      relations: ['developer', 'community', 'images', 'propertyTypes', 'floorPlans', 'paymentPlans'],
+      relations: ['developer', 'community', 'subCommunity', 'category', 'subcategory', 'images', 'propertyTypes', 'floorPlans', 'paymentPlans'],
     });
 
     if (!project) {
@@ -184,7 +258,7 @@ export class ProjectsService {
   async findBySlug(slug: string): Promise<OffplanProject> {
     const project = await this.projectRepository.findOne({
       where: { slug, section_id: OFFPLAN_SECTION_ID },
-      relations: ['developer', 'community', 'images', 'propertyTypes', 'floorPlans', 'paymentPlans'],
+      relations: ['developer', 'community', 'subCommunity', 'category', 'subcategory', 'images', 'propertyTypes', 'floorPlans', 'paymentPlans'],
     });
 
     if (!project) {
@@ -253,6 +327,24 @@ export class ProjectsService {
 
   async getAllCommunities(): Promise<Community[]> {
     return this.communityRepository.find({
+      order: { name: 'ASC' },
+    });
+  }
+
+  async getAllSubCommunities(): Promise<SubCommunity[]> {
+    return this.subCommunityRepository.find({
+      order: { name: 'ASC' },
+    });
+  }
+
+  async getAllCategories(): Promise<Category[]> {
+    return this.categoryRepository.find({
+      order: { name: 'ASC' },
+    });
+  }
+
+  async getAllSubcategories(): Promise<Subcategory[]> {
+    return this.subcategoryRepository.find({
       order: { name: 'ASC' },
     });
   }

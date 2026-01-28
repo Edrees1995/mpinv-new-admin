@@ -8,6 +8,9 @@ import {
 } from 'typeorm';
 import { Developer } from './developer.entity';
 import { Community } from './community.entity';
+import { SubCommunity } from './sub-community.entity';
+import { Category } from './category.entity';
+import { Subcategory } from './subcategory.entity';
 import { AdImage } from './ad-image.entity';
 import { AdPropertyType } from './ad-property-type.entity';
 import { AdFloorPlan } from './ad-floor-plan.entity';
@@ -129,6 +132,125 @@ export class OffplanProject {
   @Column({ name: 'last_updated', type: 'timestamp' })
   updated_at: Date;
 
+  // === NEW FIELDS: Category / Classification ===
+  @Column({ name: 'category_id', nullable: true })
+  category_id: number;
+
+  @Column({ name: 'sub_category_id', nullable: true })
+  sub_category_id: number;
+
+  @Column({ name: 'type_of_project', length: 250, nullable: true })
+  type_of_project: string;
+
+  @Column({ name: 'off_plan', length: 50, nullable: true })
+  off_plan: string;
+
+  @Column({ name: 'listing_type', length: 50, nullable: true })
+  listing_type: string;
+
+  // === NEW FIELDS: Timeline / Sales ===
+  @Column({ name: 'launch_date', length: 100, nullable: true })
+  launch_date: string;
+
+  @Column({ name: 'possession', length: 100, nullable: true })
+  possession: string;
+
+  @Column({ name: 'completion_date', length: 100, nullable: true })
+  completion_date: string;
+
+  @Column({ name: 'sale_status', length: 50, nullable: true })
+  sale_status: string;
+
+  // === NEW FIELDS: Payment Plan ===
+  @Column({ name: 'pay_plan', length: 250, nullable: true })
+  pay_plan: string;
+
+  @Column({ name: 'payment_plan', type: 'text', nullable: true })
+  payment_plan: string;
+
+  // === NEW FIELDS: Registration / Legal ===
+  @Column({ name: 'rera', length: 100, nullable: true })
+  rera: string;
+
+  @Column({ name: 'ref_no', length: 100, nullable: true })
+  ref_no: string;
+
+  @Column({ name: 'ded', length: 100, nullable: true })
+  ded: string;
+
+  @Column({ name: 'brn', length: 100, nullable: true })
+  brn: string;
+
+  @Column({ name: 'qr', length: 250, nullable: true })
+  qr: string;
+
+  // === NEW FIELDS: Agent Info ===
+  @Column({ name: 'agent_name', length: 250, nullable: true })
+  agent_name: string;
+
+  @Column({ name: 'agent_phone', length: 50, nullable: true })
+  agent_phone: string;
+
+  @Column({ name: 'agent_email', length: 250, nullable: true })
+  agent_email: string;
+
+  @Column({ name: 'agent_logo', length: 250, nullable: true })
+  agent_logo: string;
+
+  @Column({ name: 'mobile_number', length: 50, nullable: true })
+  mobile_number: string;
+
+  // === NEW FIELDS: SEO ===
+  @Column({ name: 'meta_title', length: 250, nullable: true })
+  meta_title: string;
+
+  @Column({ name: 'meta_keywords', type: 'text', nullable: true })
+  meta_keywords: string;
+
+  @Column({ name: 'meta_description', type: 'text', nullable: true })
+  meta_description: string;
+
+  // === NEW FIELDS: Slider / Background Images ===
+  @Column({ name: 'bg_img', length: 250, nullable: true })
+  bg_img: string;
+
+  @Column({ name: 'bg_img_mobile', length: 250, nullable: true })
+  bg_img_mobile: string;
+
+  @Column({ name: 'sliding', length: 1, nullable: true })
+  sliding: string;
+
+  @Column({ name: 'home_sliding', length: 1, nullable: true })
+  home_sliding: string;
+
+  @Column({ name: 'caption', type: 'text', nullable: true })
+  caption: string;
+
+  @Column({ name: 'd_right', length: 250, nullable: true })
+  d_right: string;
+
+  @Column({ name: 'bg_attachment1', length: 250, nullable: true })
+  bg_attachment1: string;
+
+  @Column({ name: 'bg_attachment2', length: 250, nullable: true })
+  bg_attachment2: string;
+
+  // === NEW FIELDS: Additional Details ===
+  @Column({ name: 'parking', length: 50, nullable: true })
+  parking: string;
+
+  @Column({ name: 'furnished', length: 50, nullable: true })
+  furnished: string;
+
+  @Column({ name: 'currency_abr', length: 10, nullable: true })
+  currency_abr: string;
+
+  @Column({ name: 'area_measurement', length: 50, nullable: true })
+  area_measurement: string;
+
+  @Column({ name: 'area_unit', length: 20, nullable: true })
+  area_unit: string;
+
   // Relations
   @ManyToOne(() => Developer)
   @JoinColumn({ name: 'developer_id' })
@@ -137,6 +259,18 @@ export class OffplanProject {
   @ManyToOne(() => Community)
   @JoinColumn({ name: 'community_id' })
   community: Community;
+
+  @ManyToOne(() => SubCommunity)
+  @JoinColumn({ name: 'sub_community_id' })
+  subCommunity: SubCommunity;
+
+  @ManyToOne(() => Category)
+  @JoinColumn({ name: 'category_id' })
+  category: Category;
+
+  @ManyToOne(() => Subcategory)
+  @JoinColumn({ name: 'sub_category_id' })
+  subcategory: Subcategory;
 
   @OneToMany(() => AdImage, (image) => image.project)
   images: AdImage[];

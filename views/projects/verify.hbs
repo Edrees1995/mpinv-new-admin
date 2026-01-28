@@ -1,0 +1,114 @@
+<!-- Breadcrumb -->
+<nav class="mb-6">
+    <ol class="flex items-center space-x-2 text-sm">
+        <li>
+            <a href="/" class="text-gray-500 hover:text-gray-700">Dashboard</a>
+        </li>
+        <li class="text-gray-400">/</li>
+        <li>
+            <a href="/projects" class="text-gray-500 hover:text-gray-700">Projects</a>
+        </li>
+        <li class="text-gray-400">/</li>
+        <li class="text-gray-900 font-medium">Verify</li>
+    </ol>
+</nav>
+
+<!-- Page Header -->
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">Verify Projects</h1>
+        <p class="mt-1 text-sm text-gray-500">Check data completeness and compare with old admin - {{pagination.total}} total projects</p>
+    </div>
+    <a href="/projects" class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Back to List
+    </a>
+</div>
+
+<!-- Projects Table -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project Name</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Completeness</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Key Fields</th>
+                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {{#each projects}}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{this.id}}</td>
+                    <td class="px-4 py-3">
+                        <div class="text-sm font-medium text-gray-900">{{this.name}}</div>
+                        <div class="text-xs text-gray-500">/{{this.slug}}</div>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                                <div class="h-2 rounded-full {{#if (gte this.completeness 80)}}bg-green-500{{else if (gte this.completeness 50)}}bg-yellow-500{{else}}bg-red-500{{/if}}" style="width: {{this.completeness}}%"></div>
+                            </div>
+                            <span class="text-sm {{#if (gte this.completeness 80)}}text-green-600{{else if (gte this.completeness 50)}}text-yellow-600{{else}}text-red-600{{/if}}">{{this.completeness}}%</span>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                            <span class="inline-block w-2 h-2 rounded-full {{#if this.featured_image}}bg-green-400{{else}}bg-red-400{{/if}}" title="Image"></span>
+                            <span class="inline-block w-2 h-2 rounded-full {{#if this.description}}bg-green-400{{else}}bg-red-400{{/if}}" title="Description"></span>
+                            <span class="inline-block w-2 h-2 rounded-full {{#if this.price}}bg-green-400{{else}}bg-red-400{{/if}}" title="Price"></span>
+                            <span class="inline-block w-2 h-2 rounded-full {{#if this.developer_id}}bg-green-400{{else}}bg-red-400{{/if}}" title="Developer"></span>
+                            <span class="inline-block w-2 h-2 rounded-full {{#if this.community_id}}bg-green-400{{else}}bg-red-400{{/if}}" title="Community"></span>
+                            <span class="inline-block w-2 h-2 rounded-full {{#if this.rera}}bg-green-400{{else}}bg-red-400{{/if}}" title="RERA"></span>
+                            <span class="inline-block w-2 h-2 rounded-full {{#if this.meta_title}}bg-green-400{{else}}bg-red-400{{/if}}" title="SEO"></span>
+                            <span class="inline-block w-2 h-2 rounded-full {{#if this.agent_name}}bg-green-400{{else}}bg-red-400{{/if}}" title="Agent"></span>
+                        </div>
+                        <div class="text-xs text-gray-400 mt-1">img / desc / price / dev / comm / rera / seo / agent</div>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+                        <a href="/projects/{{this.id}}" class="text-blue-600 hover:text-blue-900 mr-2">View</a>
+                        <a href="/projects/{{this.id}}/compare" class="text-purple-600 hover:text-purple-900 mr-2">Compare</a>
+                        <a href="/projects/{{this.id}}/edit" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Pagination -->
+{{#if (gt pagination.totalPages 1)}}
+<div class="mt-6 flex items-center justify-between">
+    <div class="text-sm text-gray-500">
+        Showing page {{pagination.page}} of {{pagination.totalPages}} ({{pagination.total}} total)
+    </div>
+    <div class="flex items-center space-x-2">
+        {{#if pagination.hasPrev}}
+        <a href="/projects/verify?page={{subtract pagination.page 1}}&limit={{pagination.limit}}" class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50">Previous</a>
+        {{/if}}
+        {{#each (range 1 pagination.totalPages)}}
+        <a href="/projects/verify?page={{this}}&limit={{../pagination.limit}}" class="px-3 py-1 border rounded text-sm {{#if (eq this ../pagination.page)}}bg-indigo-600 text-white border-indigo-600{{else}}border-gray-300 hover:bg-gray-50{{/if}}">{{this}}</a>
+        {{/each}}
+        {{#if pagination.hasNext}}
+        <a href="/projects/verify?page={{add pagination.page 1}}&limit={{pagination.limit}}" class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50">Next</a>
+        {{/if}}
+    </div>
+</div>
+{{/if}}
+
+<!-- Legend -->
+<div class="mt-6 bg-gray-50 rounded-lg border border-gray-200 p-4">
+    <h3 class="text-sm font-medium text-gray-700 mb-2">Legend</h3>
+    <div class="flex flex-wrap gap-4 text-sm">
+        <span class="flex items-center"><span class="w-3 h-3 rounded-full bg-green-400 mr-1"></span> Field has data</span>
+        <span class="flex items-center"><span class="w-3 h-3 rounded-full bg-red-400 mr-1"></span> Field is empty</span>
+        <span class="flex items-center"><span class="w-3 h-3 rounded-full bg-green-500 mr-1"></span> 80%+ complete</span>
+        <span class="flex items-center"><span class="w-3 h-3 rounded-full bg-yellow-500 mr-1"></span> 50-79% complete</span>
+        <span class="flex items-center"><span class="w-3 h-3 rounded-full bg-red-500 mr-1"></span> Under 50% complete</span>
+    </div>
+</div>

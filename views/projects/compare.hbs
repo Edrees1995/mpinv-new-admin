@@ -1,0 +1,249 @@
+<!-- Breadcrumb -->
+<nav class="mb-6">
+    <ol class="flex items-center space-x-2 text-sm">
+        <li>
+            <a href="/" class="text-gray-500 hover:text-gray-700">Dashboard</a>
+        </li>
+        <li class="text-gray-400">/</li>
+        <li>
+            <a href="/projects" class="text-gray-500 hover:text-gray-700">Projects</a>
+        </li>
+        <li class="text-gray-400">/</li>
+        <li>
+            <a href="/projects/verify" class="text-gray-500 hover:text-gray-700">Verify</a>
+        </li>
+        <li class="text-gray-400">/</li>
+        <li class="text-gray-900 font-medium">Compare #{{project.id}}</li>
+    </ol>
+</nav>
+
+<!-- Page Header -->
+<div class="mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">Compare: {{project.name}}</h1>
+        <p class="mt-1 text-sm text-gray-500">Side-by-side comparison with old admin data</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <a href="/projects/{{project.id}}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">View</a>
+        <a href="/projects/{{project.id}}/edit" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">Edit</a>
+        <a href="/projects/verify" class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">Back to Verify</a>
+    </div>
+</div>
+
+<!-- Loading State -->
+<div id="compare-loading" class="bg-white rounded-lg shadow-sm border border-gray-100 p-8 text-center">
+    <svg class="animate-spin h-8 w-8 text-indigo-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+    <p class="text-gray-600">Loading old admin data for comparison...</p>
+    <p class="text-sm text-gray-400 mt-1">Fetching from: https://admin.mpinv.cloud/api/site/offplan_detail?slug={{slug}}</p>
+</div>
+
+<!-- Compare Table (populated by JS) -->
+<div id="compare-content" class="hidden space-y-6">
+    <!-- Summary -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-900">Comparison Summary</h2>
+            <div id="compare-summary" class="text-sm"></div>
+        </div>
+        <div class="grid grid-cols-3 gap-4 text-center">
+            <div class="bg-green-50 rounded-lg p-3">
+                <p id="match-count" class="text-2xl font-bold text-green-600">-</p>
+                <p class="text-xs text-green-700">Matching</p>
+            </div>
+            <div class="bg-yellow-50 rounded-lg p-3">
+                <p id="diff-count" class="text-2xl font-bold text-yellow-600">-</p>
+                <p class="text-xs text-yellow-700">Different</p>
+            </div>
+            <div class="bg-red-50 rounded-lg p-3">
+                <p id="missing-count" class="text-2xl font-bold text-red-600">-</p>
+                <p class="text-xs text-red-700">Missing in New</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Field Comparison Table -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-1/6">Field</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-2/5">New Admin</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-2/5">Old Admin</th>
+                        <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase w-16">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="compare-tbody" class="bg-white divide-y divide-gray-200">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Error State -->
+<div id="compare-error" class="hidden bg-red-50 rounded-lg border border-red-200 p-6 text-center">
+    <svg class="w-12 h-12 text-red-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+    </svg>
+    <p id="compare-error-msg" class="text-red-700 font-medium">Could not load old admin data</p>
+    <p class="text-sm text-red-500 mt-1">The old admin API may be unavailable or the project slug may not match.</p>
+</div>
+
+<script>
+(function() {
+    const slug = '{{slug}}';
+    const newData = {
+        id: '{{project.id}}',
+        name: '{{project.name}}',
+        slug: '{{project.slug}}',
+        price: '{{project.price}}',
+        bedrooms: '{{project.bedrooms}}',
+        bathrooms: '{{project.bathrooms}}',
+        size: '{{project.size}}',
+        plot_size: '{{project.plot_size}}',
+        no_of_units: '{{project.no_of_units}}',
+        developer_name: '{{project.developer_name}}',
+        community_id: '{{project.community_id}}',
+        sub_community_id: '{{project.sub_community_id}}',
+        project_status: '{{project.project_status}}',
+        completion_year: '{{project.completion_year}}',
+        featured: '{{project.featured}}',
+        status: '{{project.status}}',
+        category_id: '{{project.category_id}}',
+        sub_category_id: '{{project.sub_category_id}}',
+        type_of_project: '{{project.type_of_project}}',
+        off_plan: '{{project.off_plan}}',
+        listing_type: '{{project.listing_type}}',
+        launch_date: '{{project.launch_date}}',
+        possession: '{{project.possession}}',
+        completion_date: '{{project.completion_date}}',
+        sale_status: '{{project.sale_status}}',
+        pay_plan: '{{project.pay_plan}}',
+        rera: '{{project.rera}}',
+        ref_no: '{{project.ref_no}}',
+        ded: '{{project.ded}}',
+        brn: '{{project.brn}}',
+        agent_name: '{{project.agent_name}}',
+        agent_phone: '{{project.agent_phone}}',
+        agent_email: '{{project.agent_email}}',
+        mobile_number: '{{project.mobile_number}}',
+        meta_title: '{{project.meta_title}}',
+        parking: '{{project.parking}}',
+        furnished: '{{project.furnished}}',
+        currency_abr: '{{project.currency_abr}}',
+        sliding: '{{project.sliding}}',
+        home_sliding: '{{project.home_sliding}}',
+    };
+
+    // Field mapping: new admin field name -> old admin API field name
+    const fieldMap = {
+        'name': 'ad_title',
+        'slug': 'slug',
+        'price': 'price',
+        'bedrooms': 'bedrooms',
+        'bathrooms': 'bathrooms',
+        'size': 'builtup_area',
+        'plot_size': 'plot_size',
+        'no_of_units': 'no_of_units',
+        'developer_name': 'd_name',
+        'community_id': 'community_id',
+        'sub_community_id': 'sub_community_id',
+        'project_status': 'project_status',
+        'completion_year': 'completion_year',
+        'featured': 'featured',
+        'status': 'status',
+        'category_id': 'category_id',
+        'sub_category_id': 'sub_category_id',
+        'type_of_project': 'type_of_project',
+        'off_plan': 'off_plan',
+        'listing_type': 'listing_type',
+        'launch_date': 'launch_date',
+        'possession': 'possession',
+        'completion_date': 'completion_date',
+        'sale_status': 'sale_status',
+        'pay_plan': 'pay_plan',
+        'rera': 'rera',
+        'ref_no': 'ref_no',
+        'ded': 'ded',
+        'brn': 'brn',
+        'agent_name': 'agent_name',
+        'agent_phone': 'agent_phone',
+        'agent_email': 'agent_email',
+        'mobile_number': 'mobile_number',
+        'meta_title': 'meta_title',
+        'parking': 'parking',
+        'furnished': 'furnished',
+        'currency_abr': 'currency_abr',
+        'sliding': 'sliding',
+        'home_sliding': 'home_sliding',
+    };
+
+    const apiUrl = 'https://admin.mpinv.cloud/api/site/offplan_detail?slug=' + encodeURIComponent(slug);
+
+    fetch(apiUrl)
+        .then(function(res) { return res.json(); })
+        .then(function(response) {
+            var oldData = response.data || response;
+            if (Array.isArray(oldData)) oldData = oldData[0] || {};
+
+            document.getElementById('compare-loading').classList.add('hidden');
+            document.getElementById('compare-content').classList.remove('hidden');
+
+            var tbody = document.getElementById('compare-tbody');
+            var matchCount = 0, diffCount = 0, missingCount = 0;
+
+            var keys = Object.keys(fieldMap);
+            for (var i = 0; i < keys.length; i++) {
+                var newField = keys[i];
+                var oldField = fieldMap[newField];
+                var newVal = (newData[newField] || '').toString().trim();
+                var oldVal = (oldData[oldField] !== undefined && oldData[oldField] !== null) ? oldData[oldField].toString().trim() : '';
+
+                var status, statusClass, bgClass;
+                if (newVal === oldVal) {
+                    status = 'Match';
+                    statusClass = 'text-green-600';
+                    bgClass = '';
+                    matchCount++;
+                } else if (!newVal && oldVal) {
+                    status = 'Missing';
+                    statusClass = 'text-red-600';
+                    bgClass = 'bg-red-50';
+                    missingCount++;
+                } else if (newVal && !oldVal) {
+                    status = 'New Only';
+                    statusClass = 'text-blue-600';
+                    bgClass = 'bg-blue-50';
+                    matchCount++;
+                } else {
+                    status = 'Diff';
+                    statusClass = 'text-yellow-600';
+                    bgClass = 'bg-yellow-50';
+                    diffCount++;
+                }
+
+                var truncNew = newVal.length > 80 ? newVal.substring(0, 80) + '...' : newVal;
+                var truncOld = oldVal.length > 80 ? oldVal.substring(0, 80) + '...' : oldVal;
+
+                tbody.innerHTML += '<tr class="' + bgClass + '">' +
+                    '<td class="px-4 py-2 text-sm font-medium text-gray-700">' + newField + '</td>' +
+                    '<td class="px-4 py-2 text-sm text-gray-600">' + (truncNew || '<span class=&quot;text-gray-300 italic&quot;>empty</span>') + '</td>' +
+                    '<td class="px-4 py-2 text-sm text-gray-600">' + (truncOld || '<span class=&quot;text-gray-300 italic&quot;>empty</span>') + '</td>' +
+                    '<td class="px-4 py-2 text-center"><span class="text-xs font-medium ' + statusClass + '">' + status + '</span></td>' +
+                    '</tr>';
+            }
+
+            document.getElementById('match-count').textContent = matchCount;
+            document.getElementById('diff-count').textContent = diffCount;
+            document.getElementById('missing-count').textContent = missingCount;
+        })
+        .catch(function(err) {
+            document.getElementById('compare-loading').classList.add('hidden');
+            document.getElementById('compare-error').classList.remove('hidden');
+            document.getElementById('compare-error-msg').textContent = 'Error: ' + err.message;
+        });
+})();
+</script>
