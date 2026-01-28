@@ -45,9 +45,9 @@ export interface CreateProjectDto {
   off_plan?: string;
   listing_type?: string;
   // Timeline / Sales
-  launch_date?: string;
-  possession?: string;
-  completion_date?: string;
+  launch_date?: Date;
+  possession?: Date;
+  completion_date?: Date;
   sale_status?: string;
   // Payment Plan
   pay_plan?: string;
@@ -82,7 +82,7 @@ export interface CreateProjectDto {
   furnished?: string;
   currency_abr?: string;
   area_measurement?: string;
-  area_unit?: string;
+  area_unit?: number;
 }
 
 export interface UpdateProjectDto extends Partial<CreateProjectDto> {}

@@ -139,82 +139,82 @@ export class OffplanProject {
   @Column({ name: 'sub_category_id', nullable: true })
   sub_category_id: number;
 
-  @Column({ name: 'type_of_project', length: 250, nullable: true })
+  @Column({ name: 'type_of_project', length: 1, nullable: true })
   type_of_project: string;
 
-  @Column({ name: 'off_plan', length: 50, nullable: true })
+  @Column({ name: 'off_plan', type: 'enum', enum: ['0', '1'], nullable: true })
   off_plan: string;
 
-  @Column({ name: 'listing_type', length: 50, nullable: true })
+  @Column({ name: 'listing_type', length: 1, nullable: true })
   listing_type: string;
 
   // === NEW FIELDS: Timeline / Sales ===
-  @Column({ name: 'launch_date', length: 100, nullable: true })
-  launch_date: string;
+  @Column({ name: 'launch_date', type: 'date', nullable: true })
+  launch_date: Date;
 
-  @Column({ name: 'possession', length: 100, nullable: true })
-  possession: string;
+  @Column({ name: 'possession', type: 'date', nullable: true })
+  possession: Date;
 
-  @Column({ name: 'completion_date', length: 100, nullable: true })
-  completion_date: string;
+  @Column({ name: 'completion_date', type: 'date', nullable: true })
+  completion_date: Date;
 
-  @Column({ name: 'sale_status', length: 50, nullable: true })
+  @Column({ name: 'sale_status', length: 25, nullable: true })
   sale_status: string;
 
   // === NEW FIELDS: Payment Plan ===
   @Column({ name: 'pay_plan', length: 250, nullable: true })
   pay_plan: string;
 
-  @Column({ name: 'payment_plan', type: 'text', nullable: true })
+  @Column({ name: 'payment_plan', type: 'blob', nullable: true })
   payment_plan: string;
 
   // === NEW FIELDS: Registration / Legal ===
-  @Column({ name: 'rera', length: 100, nullable: true })
+  @Column({ name: 'rera', length: 15, nullable: true })
   rera: string;
 
-  @Column({ name: 'ref_no', length: 100, nullable: true })
+  @Column({ name: 'RefNo', length: 20, nullable: true })
   ref_no: string;
 
-  @Column({ name: 'ded', length: 100, nullable: true })
+  @Column({ name: 'ded', length: 15, nullable: true })
   ded: string;
 
-  @Column({ name: 'brn', length: 100, nullable: true })
+  @Column({ name: 'brn', length: 15, nullable: true })
   brn: string;
 
-  @Column({ name: 'qr', length: 250, nullable: true })
+  @Column({ name: 'qr', length: 100, nullable: true })
   qr: string;
 
   // === NEW FIELDS: Agent Info ===
-  @Column({ name: 'agent_name', length: 250, nullable: true })
+  @Column({ name: 'agent_name', length: 150, nullable: true })
   agent_name: string;
 
-  @Column({ name: 'agent_phone', length: 50, nullable: true })
+  @Column({ name: 'agent_phone', length: 20, nullable: true })
   agent_phone: string;
 
-  @Column({ name: 'agent_email', length: 250, nullable: true })
+  @Column({ name: 'agent_email', length: 150, nullable: true })
   agent_email: string;
 
-  @Column({ name: 'agent_logo', length: 250, nullable: true })
+  @Column({ name: 'agent_logo', length: 100, nullable: true })
   agent_logo: string;
 
-  @Column({ name: 'mobile_number', length: 50, nullable: true })
+  @Column({ name: 'mobile_number', length: 15, nullable: true })
   mobile_number: string;
 
   // === NEW FIELDS: SEO ===
   @Column({ name: 'meta_title', length: 250, nullable: true })
   meta_title: string;
 
-  @Column({ name: 'meta_keywords', type: 'text', nullable: true })
+  @Column({ name: 'meta_keywords', length: 250, nullable: true })
   meta_keywords: string;
 
-  @Column({ name: 'meta_description', type: 'text', nullable: true })
+  @Column({ name: 'meta_description', length: 250, nullable: true })
   meta_description: string;
 
   // === NEW FIELDS: Slider / Background Images ===
-  @Column({ name: 'bg_img', length: 250, nullable: true })
+  @Column({ name: 'bg_img', length: 100, nullable: true })
   bg_img: string;
 
-  @Column({ name: 'bg_img_mobile', length: 250, nullable: true })
+  @Column({ name: 'bg_img_mobile', length: 100, nullable: true })
   bg_img_mobile: string;
 
   @Column({ name: 'sliding', length: 1, nullable: true })
@@ -226,30 +226,30 @@ export class OffplanProject {
   @Column({ name: 'caption', type: 'text', nullable: true })
   caption: string;
 
-  @Column({ name: 'd_right', length: 250, nullable: true })
+  @Column({ name: 'd_right', length: 100, nullable: true })
   d_right: string;
 
-  @Column({ name: 'bg_attachment1', length: 250, nullable: true })
+  @Column({ name: 'bg_attachment1', length: 100, nullable: true })
   bg_attachment1: string;
 
-  @Column({ name: 'bg_attachment2', length: 250, nullable: true })
+  @Column({ name: 'bg_attachment2', length: 100, nullable: true })
   bg_attachment2: string;
 
   // === NEW FIELDS: Additional Details ===
-  @Column({ name: 'parking', length: 50, nullable: true })
+  @Column({ name: 'parking', length: 5, nullable: true })
   parking: string;
 
-  @Column({ name: 'furnished', length: 50, nullable: true })
+  @Column({ name: 'furnished', length: 10, nullable: true })
   furnished: string;
 
   @Column({ name: 'currency_abr', length: 10, nullable: true })
   currency_abr: string;
 
-  @Column({ name: 'area_measurement', length: 50, nullable: true })
+  @Column({ name: 'area_measurement', length: 10, nullable: true })
   area_measurement: string;
 
-  @Column({ name: 'area_unit', length: 20, nullable: true })
-  area_unit: string;
+  @Column({ name: 'area_unit', nullable: true })
+  area_unit: number;
 
   // Relations
   @ManyToOne(() => Developer)
