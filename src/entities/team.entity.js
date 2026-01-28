@@ -1,0 +1,190 @@
+"use strict";
+var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
+    function accept(f) { if (f !== void 0 && typeof f !== "function") throw new TypeError("Function expected"); return f; }
+    var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
+    var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
+    var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
+    var _, done = false;
+    for (var i = decorators.length - 1; i >= 0; i--) {
+        var context = {};
+        for (var p in contextIn) context[p] = p === "access" ? {} : contextIn[p];
+        for (var p in contextIn.access) context.access[p] = contextIn.access[p];
+        context.addInitializer = function (f) { if (done) throw new TypeError("Cannot add initializers after decoration has completed"); extraInitializers.push(accept(f || null)); };
+        var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context);
+        if (kind === "accessor") {
+            if (result === void 0) continue;
+            if (result === null || typeof result !== "object") throw new TypeError("Object expected");
+            if (_ = accept(result.get)) descriptor.get = _;
+            if (_ = accept(result.set)) descriptor.set = _;
+            if (_ = accept(result.init)) initializers.unshift(_);
+        }
+        else if (_ = accept(result)) {
+            if (kind === "field") initializers.unshift(_);
+            else descriptor[key] = _;
+        }
+    }
+    if (target) Object.defineProperty(target, contextIn.name, descriptor);
+    done = true;
+};
+var __runInitializers = (this && this.__runInitializers) || function (thisArg, initializers, value) {
+    var useValue = arguments.length > 2;
+    for (var i = 0; i < initializers.length; i++) {
+        value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
+    }
+    return useValue ? value : void 0;
+};
+var __setFunctionName = (this && this.__setFunctionName) || function (f, name, prefix) {
+    if (typeof name === "symbol") name = name.description ? "[".concat(name.description, "]") : "";
+    return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Team = void 0;
+var typeorm_1 = require("typeorm");
+var Team = function () {
+    var _classDecorators = [(0, typeorm_1.Entity)('mw_teams')];
+    var _classDescriptor;
+    var _classExtraInitializers = [];
+    var _classThis;
+    var _id_decorators;
+    var _id_initializers = [];
+    var _id_extraInitializers = [];
+    var _name_decorators;
+    var _name_initializers = [];
+    var _name_extraInitializers = [];
+    var _slug_decorators;
+    var _slug_initializers = [];
+    var _slug_extraInitializers = [];
+    var _designation_decorators;
+    var _designation_initializers = [];
+    var _designation_extraInitializers = [];
+    var _bio_decorators;
+    var _bio_initializers = [];
+    var _bio_extraInitializers = [];
+    var _image_decorators;
+    var _image_initializers = [];
+    var _image_extraInitializers = [];
+    var _email_decorators;
+    var _email_initializers = [];
+    var _email_extraInitializers = [];
+    var _phone_decorators;
+    var _phone_initializers = [];
+    var _phone_extraInitializers = [];
+    var _whatsapp_decorators;
+    var _whatsapp_initializers = [];
+    var _whatsapp_extraInitializers = [];
+    var _linkedin_decorators;
+    var _linkedin_initializers = [];
+    var _linkedin_extraInitializers = [];
+    var _facebook_decorators;
+    var _facebook_initializers = [];
+    var _facebook_extraInitializers = [];
+    var _instagram_decorators;
+    var _instagram_initializers = [];
+    var _instagram_extraInitializers = [];
+    var _twitter_decorators;
+    var _twitter_initializers = [];
+    var _twitter_extraInitializers = [];
+    var _languages_decorators;
+    var _languages_initializers = [];
+    var _languages_extraInitializers = [];
+    var _status_decorators;
+    var _status_initializers = [];
+    var _status_extraInitializers = [];
+    var _featured_decorators;
+    var _featured_initializers = [];
+    var _featured_extraInitializers = [];
+    var _sort_order_decorators;
+    var _sort_order_initializers = [];
+    var _sort_order_extraInitializers = [];
+    var _meta_title_decorators;
+    var _meta_title_initializers = [];
+    var _meta_title_extraInitializers = [];
+    var _meta_description_decorators;
+    var _meta_description_initializers = [];
+    var _meta_description_extraInitializers = [];
+    var _created_at_decorators;
+    var _created_at_initializers = [];
+    var _created_at_extraInitializers = [];
+    var _updated_at_decorators;
+    var _updated_at_initializers = [];
+    var _updated_at_extraInitializers = [];
+    var Team = _classThis = /** @class */ (function () {
+        function Team_1() {
+            this.id = __runInitializers(this, _id_initializers, void 0);
+            this.name = (__runInitializers(this, _id_extraInitializers), __runInitializers(this, _name_initializers, void 0));
+            this.slug = (__runInitializers(this, _name_extraInitializers), __runInitializers(this, _slug_initializers, void 0));
+            this.designation = (__runInitializers(this, _slug_extraInitializers), __runInitializers(this, _designation_initializers, void 0));
+            this.bio = (__runInitializers(this, _designation_extraInitializers), __runInitializers(this, _bio_initializers, void 0));
+            this.image = (__runInitializers(this, _bio_extraInitializers), __runInitializers(this, _image_initializers, void 0));
+            this.email = (__runInitializers(this, _image_extraInitializers), __runInitializers(this, _email_initializers, void 0));
+            this.phone = (__runInitializers(this, _email_extraInitializers), __runInitializers(this, _phone_initializers, void 0));
+            this.whatsapp = (__runInitializers(this, _phone_extraInitializers), __runInitializers(this, _whatsapp_initializers, void 0));
+            this.linkedin = (__runInitializers(this, _whatsapp_extraInitializers), __runInitializers(this, _linkedin_initializers, void 0));
+            this.facebook = (__runInitializers(this, _linkedin_extraInitializers), __runInitializers(this, _facebook_initializers, void 0));
+            this.instagram = (__runInitializers(this, _facebook_extraInitializers), __runInitializers(this, _instagram_initializers, void 0));
+            this.twitter = (__runInitializers(this, _instagram_extraInitializers), __runInitializers(this, _twitter_initializers, void 0));
+            this.languages = (__runInitializers(this, _twitter_extraInitializers), __runInitializers(this, _languages_initializers, void 0)); // JSON array
+            this.status = (__runInitializers(this, _languages_extraInitializers), __runInitializers(this, _status_initializers, void 0));
+            this.featured = (__runInitializers(this, _status_extraInitializers), __runInitializers(this, _featured_initializers, void 0));
+            this.sort_order = (__runInitializers(this, _featured_extraInitializers), __runInitializers(this, _sort_order_initializers, void 0));
+            this.meta_title = (__runInitializers(this, _sort_order_extraInitializers), __runInitializers(this, _meta_title_initializers, void 0));
+            this.meta_description = (__runInitializers(this, _meta_title_extraInitializers), __runInitializers(this, _meta_description_initializers, void 0));
+            this.created_at = (__runInitializers(this, _meta_description_extraInitializers), __runInitializers(this, _created_at_initializers, void 0));
+            this.updated_at = (__runInitializers(this, _created_at_extraInitializers), __runInitializers(this, _updated_at_initializers, void 0));
+            __runInitializers(this, _updated_at_extraInitializers);
+        }
+        return Team_1;
+    }());
+    __setFunctionName(_classThis, "Team");
+    (function () {
+        var _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
+        _id_decorators = [(0, typeorm_1.PrimaryGeneratedColumn)()];
+        _name_decorators = [(0, typeorm_1.Column)({ length: 100 })];
+        _slug_decorators = [(0, typeorm_1.Column)({ length: 255, nullable: true })];
+        _designation_decorators = [(0, typeorm_1.Column)({ length: 100, nullable: true })];
+        _bio_decorators = [(0, typeorm_1.Column)({ type: 'text', nullable: true })];
+        _image_decorators = [(0, typeorm_1.Column)({ length: 255, nullable: true })];
+        _email_decorators = [(0, typeorm_1.Column)({ length: 255, nullable: true })];
+        _phone_decorators = [(0, typeorm_1.Column)({ length: 50, nullable: true })];
+        _whatsapp_decorators = [(0, typeorm_1.Column)({ length: 50, nullable: true })];
+        _linkedin_decorators = [(0, typeorm_1.Column)({ length: 255, nullable: true })];
+        _facebook_decorators = [(0, typeorm_1.Column)({ length: 255, nullable: true })];
+        _instagram_decorators = [(0, typeorm_1.Column)({ length: 255, nullable: true })];
+        _twitter_decorators = [(0, typeorm_1.Column)({ length: 255, nullable: true })];
+        _languages_decorators = [(0, typeorm_1.Column)({ length: 50, nullable: true })];
+        _status_decorators = [(0, typeorm_1.Column)({ type: 'tinyint', default: 1 })];
+        _featured_decorators = [(0, typeorm_1.Column)({ type: 'tinyint', default: 0 })];
+        _sort_order_decorators = [(0, typeorm_1.Column)({ type: 'int', default: 0 })];
+        _meta_title_decorators = [(0, typeorm_1.Column)({ length: 255, nullable: true })];
+        _meta_description_decorators = [(0, typeorm_1.Column)({ type: 'text', nullable: true })];
+        _created_at_decorators = [(0, typeorm_1.CreateDateColumn)()];
+        _updated_at_decorators = [(0, typeorm_1.UpdateDateColumn)()];
+        __esDecorate(null, null, _id_decorators, { kind: "field", name: "id", static: false, private: false, access: { has: function (obj) { return "id" in obj; }, get: function (obj) { return obj.id; }, set: function (obj, value) { obj.id = value; } }, metadata: _metadata }, _id_initializers, _id_extraInitializers);
+        __esDecorate(null, null, _name_decorators, { kind: "field", name: "name", static: false, private: false, access: { has: function (obj) { return "name" in obj; }, get: function (obj) { return obj.name; }, set: function (obj, value) { obj.name = value; } }, metadata: _metadata }, _name_initializers, _name_extraInitializers);
+        __esDecorate(null, null, _slug_decorators, { kind: "field", name: "slug", static: false, private: false, access: { has: function (obj) { return "slug" in obj; }, get: function (obj) { return obj.slug; }, set: function (obj, value) { obj.slug = value; } }, metadata: _metadata }, _slug_initializers, _slug_extraInitializers);
+        __esDecorate(null, null, _designation_decorators, { kind: "field", name: "designation", static: false, private: false, access: { has: function (obj) { return "designation" in obj; }, get: function (obj) { return obj.designation; }, set: function (obj, value) { obj.designation = value; } }, metadata: _metadata }, _designation_initializers, _designation_extraInitializers);
+        __esDecorate(null, null, _bio_decorators, { kind: "field", name: "bio", static: false, private: false, access: { has: function (obj) { return "bio" in obj; }, get: function (obj) { return obj.bio; }, set: function (obj, value) { obj.bio = value; } }, metadata: _metadata }, _bio_initializers, _bio_extraInitializers);
+        __esDecorate(null, null, _image_decorators, { kind: "field", name: "image", static: false, private: false, access: { has: function (obj) { return "image" in obj; }, get: function (obj) { return obj.image; }, set: function (obj, value) { obj.image = value; } }, metadata: _metadata }, _image_initializers, _image_extraInitializers);
+        __esDecorate(null, null, _email_decorators, { kind: "field", name: "email", static: false, private: false, access: { has: function (obj) { return "email" in obj; }, get: function (obj) { return obj.email; }, set: function (obj, value) { obj.email = value; } }, metadata: _metadata }, _email_initializers, _email_extraInitializers);
+        __esDecorate(null, null, _phone_decorators, { kind: "field", name: "phone", static: false, private: false, access: { has: function (obj) { return "phone" in obj; }, get: function (obj) { return obj.phone; }, set: function (obj, value) { obj.phone = value; } }, metadata: _metadata }, _phone_initializers, _phone_extraInitializers);
+        __esDecorate(null, null, _whatsapp_decorators, { kind: "field", name: "whatsapp", static: false, private: false, access: { has: function (obj) { return "whatsapp" in obj; }, get: function (obj) { return obj.whatsapp; }, set: function (obj, value) { obj.whatsapp = value; } }, metadata: _metadata }, _whatsapp_initializers, _whatsapp_extraInitializers);
+        __esDecorate(null, null, _linkedin_decorators, { kind: "field", name: "linkedin", static: false, private: false, access: { has: function (obj) { return "linkedin" in obj; }, get: function (obj) { return obj.linkedin; }, set: function (obj, value) { obj.linkedin = value; } }, metadata: _metadata }, _linkedin_initializers, _linkedin_extraInitializers);
+        __esDecorate(null, null, _facebook_decorators, { kind: "field", name: "facebook", static: false, private: false, access: { has: function (obj) { return "facebook" in obj; }, get: function (obj) { return obj.facebook; }, set: function (obj, value) { obj.facebook = value; } }, metadata: _metadata }, _facebook_initializers, _facebook_extraInitializers);
+        __esDecorate(null, null, _instagram_decorators, { kind: "field", name: "instagram", static: false, private: false, access: { has: function (obj) { return "instagram" in obj; }, get: function (obj) { return obj.instagram; }, set: function (obj, value) { obj.instagram = value; } }, metadata: _metadata }, _instagram_initializers, _instagram_extraInitializers);
+        __esDecorate(null, null, _twitter_decorators, { kind: "field", name: "twitter", static: false, private: false, access: { has: function (obj) { return "twitter" in obj; }, get: function (obj) { return obj.twitter; }, set: function (obj, value) { obj.twitter = value; } }, metadata: _metadata }, _twitter_initializers, _twitter_extraInitializers);
+        __esDecorate(null, null, _languages_decorators, { kind: "field", name: "languages", static: false, private: false, access: { has: function (obj) { return "languages" in obj; }, get: function (obj) { return obj.languages; }, set: function (obj, value) { obj.languages = value; } }, metadata: _metadata }, _languages_initializers, _languages_extraInitializers);
+        __esDecorate(null, null, _status_decorators, { kind: "field", name: "status", static: false, private: false, access: { has: function (obj) { return "status" in obj; }, get: function (obj) { return obj.status; }, set: function (obj, value) { obj.status = value; } }, metadata: _metadata }, _status_initializers, _status_extraInitializers);
+        __esDecorate(null, null, _featured_decorators, { kind: "field", name: "featured", static: false, private: false, access: { has: function (obj) { return "featured" in obj; }, get: function (obj) { return obj.featured; }, set: function (obj, value) { obj.featured = value; } }, metadata: _metadata }, _featured_initializers, _featured_extraInitializers);
+        __esDecorate(null, null, _sort_order_decorators, { kind: "field", name: "sort_order", static: false, private: false, access: { has: function (obj) { return "sort_order" in obj; }, get: function (obj) { return obj.sort_order; }, set: function (obj, value) { obj.sort_order = value; } }, metadata: _metadata }, _sort_order_initializers, _sort_order_extraInitializers);
+        __esDecorate(null, null, _meta_title_decorators, { kind: "field", name: "meta_title", static: false, private: false, access: { has: function (obj) { return "meta_title" in obj; }, get: function (obj) { return obj.meta_title; }, set: function (obj, value) { obj.meta_title = value; } }, metadata: _metadata }, _meta_title_initializers, _meta_title_extraInitializers);
+        __esDecorate(null, null, _meta_description_decorators, { kind: "field", name: "meta_description", static: false, private: false, access: { has: function (obj) { return "meta_description" in obj; }, get: function (obj) { return obj.meta_description; }, set: function (obj, value) { obj.meta_description = value; } }, metadata: _metadata }, _meta_description_initializers, _meta_description_extraInitializers);
+        __esDecorate(null, null, _created_at_decorators, { kind: "field", name: "created_at", static: false, private: false, access: { has: function (obj) { return "created_at" in obj; }, get: function (obj) { return obj.created_at; }, set: function (obj, value) { obj.created_at = value; } }, metadata: _metadata }, _created_at_initializers, _created_at_extraInitializers);
+        __esDecorate(null, null, _updated_at_decorators, { kind: "field", name: "updated_at", static: false, private: false, access: { has: function (obj) { return "updated_at" in obj; }, get: function (obj) { return obj.updated_at; }, set: function (obj, value) { obj.updated_at = value; } }, metadata: _metadata }, _updated_at_initializers, _updated_at_extraInitializers);
+        __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
+        Team = _classThis = _classDescriptor.value;
+        if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
+        __runInitializers(_classThis, _classExtraInitializers);
+    })();
+    return Team = _classThis;
+}();
+exports.Team = Team;

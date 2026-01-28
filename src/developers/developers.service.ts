@@ -3,6 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like, FindOptionsWhere } from 'typeorm';
 import { Developer } from '../entities';
 
+// Base URL for images stored in the old admin panel
+const IMAGE_BASE_URL = 'https://admin.mpinv.cloud/uploads/ads/';
+
 export interface PaginationResult<T> {
   data: T[];
   total: number;
@@ -25,6 +28,14 @@ export class DevelopersService {
     @InjectRepository(Developer)
     private developerRepository: Repository<Developer>,
   ) {}
+
+  // Transform developer to include full logo URL
+  private transformDeveloper(developer: Developer): Developer {
+    if (developer.logo && !developer.logo.startsWith('http')) {
+      developer.logo = IMAGE_BASE_URL + developer.logo;
+    }
+    return developer;
+  }
 
   async findAll(filters: DeveloperFilters): Promise<PaginationResult<Developer>> {
     const page = filters.page || 1;
@@ -55,7 +66,7 @@ export class DevelopersService {
     });
 
     return {
-      data,
+      data: data.map((developer) => this.transformDeveloper(developer)),
       total,
       page,
       limit,
@@ -73,7 +84,7 @@ export class DevelopersService {
       throw new NotFoundException(`Developer with ID ${id} not found`);
     }
 
-    return developer;
+    return this.transformDeveloper(developer);
   }
 
   async create(data: Partial<Developer>): Promise<Developer> {

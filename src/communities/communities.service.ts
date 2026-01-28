@@ -3,6 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import { Community, SubCommunity } from '../entities';
 
+// Base URL for images stored in the old admin panel
+const IMAGE_BASE_URL = 'https://admin.mpinv.cloud/uploads/ads/';
+
 export interface PaginationResult<T> {
   data: T[];
   total: number;
@@ -35,6 +38,17 @@ export class CommunitiesService {
     private subCommunityRepository: Repository<SubCommunity>,
   ) {}
 
+  // Transform community to include full image URLs
+  private transformCommunity(community: Community): Community {
+    if (community.image && !community.image.startsWith('http')) {
+      community.image = IMAGE_BASE_URL + community.image;
+    }
+    if (community.image2 && !community.image2.startsWith('http')) {
+      community.image2 = IMAGE_BASE_URL + community.image2;
+    }
+    return community;
+  }
+
   async findAll(
     page = 1,
     limit = 10,
@@ -59,7 +73,7 @@ export class CommunitiesService {
     const [data, total] = await queryBuilder.getManyAndCount();
 
     return {
-      data,
+      data: data.map((community) => this.transformCommunity(community)),
       total,
       page,
       limit,
@@ -77,7 +91,7 @@ export class CommunitiesService {
       throw new NotFoundException(`Community with ID ${id} not found`);
     }
 
-    return community;
+    return this.transformCommunity(community);
   }
 
   async create(createDto: CreateCommunityDto): Promise<Community> {
