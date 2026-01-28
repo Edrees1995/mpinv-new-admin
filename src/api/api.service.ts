@@ -11,9 +11,7 @@ import {
   Contact,
   Setting,
   Article,
-  Faq,
   Banner,
-  Team,
 } from '../entities';
 
 // Image base URL for the admin
@@ -40,12 +38,8 @@ export class ApiService {
     private settingRepository: Repository<Setting>,
     @InjectRepository(Article)
     private articleRepository: Repository<Article>,
-    @InjectRepository(Faq)
-    private faqRepository: Repository<Faq>,
     @InjectRepository(Banner)
     private bannerRepository: Repository<Banner>,
-    @InjectRepository(Team)
-    private teamRepository: Repository<Team>,
   ) {}
 
   // Transform image URL - add base URL if needed
@@ -123,7 +117,11 @@ export class ApiService {
     const settings = await this.settingRepository.find();
     const settingsMap: Record<string, string> = {};
     settings.forEach((s) => {
-      settingsMap[s.option_key] = s.option_value;
+      // Convert Buffer to string
+      const value = s.option_value instanceof Buffer
+        ? s.option_value.toString('utf8')
+        : String(s.option_value || '');
+      settingsMap[s.option_key] = value;
     });
 
     return {
@@ -144,7 +142,11 @@ export class ApiService {
     });
     const settingsMap: Record<string, string> = {};
     settings.forEach((s) => {
-      settingsMap[s.option_key] = s.option_value;
+      // Convert Buffer to string
+      const value = s.option_value instanceof Buffer
+        ? s.option_value.toString('utf8')
+        : String(s.option_value || '');
+      settingsMap[s.option_key] = value;
     });
 
     return {
@@ -155,37 +157,29 @@ export class ApiService {
 
   // FAQ Items
   async getFaqItems() {
-    const faqs = await this.faqRepository.find({
-      order: { id: 'ASC' },
-    });
-
+    // Note: mw_faq table doesn't exist, mw_ad_faq is property-specific
+    // Return empty array for now until FAQ table is created
     return {
       status: 'success',
-      data: faqs,
+      data: [],
     };
   }
 
   // Testimonials
   async getTestimonialList() {
-    // Assuming testimonials might be in a different table or Team table
-    const testimonials = await this.teamRepository.find({
-      order: { id: 'ASC' },
-    });
-
+    // Note: mw_teams table doesn't exist
+    // Return empty array for now until Team/Testimonial table is created
     return {
       status: 'success',
-      data: testimonials.map((t) => ({
-        ...t,
-        image: this.transformImageUrl(t.image),
-      })),
+      data: [],
     };
   }
 
   // Blogs/Articles List
   async getBlogsList(page = 1, limit = 10) {
     const [articles, total] = await this.articleRepository.findAndCount({
-      where: { status: 1 },
-      order: { created_at: 'DESC' },
+      where: { status: 'published' },
+      order: { date_added: 'DESC' },
       skip: (page - 1) * limit,
       take: limit,
     });
@@ -194,7 +188,7 @@ export class ApiService {
       status: 'success',
       data: articles.map((a) => ({
         ...a,
-        image: this.transformImageUrl(a.featured_image),
+        image: this.transformImageUrl(a.banner),
       })),
       pagination: {
         total,
@@ -208,7 +202,7 @@ export class ApiService {
   // Article Detail
   async getArticleDetail(slug: string) {
     const article = await this.articleRepository.findOne({
-      where: { slug, status: 1 },
+      where: { slug, status: 'published' },
     });
 
     if (!article) {
@@ -219,7 +213,7 @@ export class ApiService {
       status: 'success',
       data: {
         ...article,
-        image: this.transformImageUrl(article.featured_image),
+        image: this.transformImageUrl(article.banner),
       },
     };
   }
@@ -227,8 +221,8 @@ export class ApiService {
   // Home Slides (Banners)
   async getHomeSlides() {
     const banners = await this.bannerRepository.find({
-      where: { status: 1 },
-      order: { sort_order: 'ASC' },
+      where: { status: 'A', is_trash: '0' },
+      order: { priority: 'ASC' },
     });
 
     return {

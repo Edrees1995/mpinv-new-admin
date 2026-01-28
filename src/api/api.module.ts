@@ -12,9 +12,7 @@ import {
   Contact,
   Setting,
   Article,
-  Faq,
   Banner,
-  Team,
 } from '../entities';
 
 @Module({
@@ -29,9 +27,7 @@ import {
       Contact,
       Setting,
       Article,
-      Faq,
       Banner,
-      Team,
     ]),
   ],
   controllers: [ApiController],

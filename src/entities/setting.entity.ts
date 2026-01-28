@@ -1,40 +1,26 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
+  PrimaryColumn,
 } from 'typeorm';
 
 @Entity('mw_option')
 export class Setting {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn({ length: 100 })
+  category: string;
 
-  @Column({ length: 100 })
+  @PrimaryColumn({ name: 'key', length: 100 })
   option_key: string;
 
-  @Column({ type: 'text', nullable: true })
-  option_value: string;
+  @Column({ name: 'value', type: 'longblob' })
+  option_value: Buffer;
 
-  @Column({ length: 50, nullable: true })
-  option_group: string; // general, social, contact, seo
+  @Column({ type: 'tinyint', default: 0 })
+  is_serialized: number;
 
-  @Column({ length: 50, nullable: true })
-  option_type: string; // text, textarea, image, boolean
+  @Column({ type: 'datetime' })
+  date_added: Date;
 
-  @Column({ length: 255, nullable: true })
-  label: string;
-
-  @Column({ type: 'text', nullable: true })
-  description: string;
-
-  @Column({ type: 'int', default: 0 })
-  sort_order: number;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
+  @Column({ type: 'datetime' })
+  last_updated: Date;
 }

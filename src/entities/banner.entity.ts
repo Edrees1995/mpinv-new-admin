@@ -2,54 +2,34 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('mw_banner')
 export class Banner {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'banner_id' })
   id: number;
 
-  @Column({ length: 255, nullable: true })
-  title: string;
+  @Column()
+  position_id: number;
 
-  @Column({ type: 'text', nullable: true })
-  subtitle: string;
-
-  @Column({ length: 255 })
+  @Column({ length: 250 })
   image: string;
 
-  @Column({ length: 255, nullable: true })
-  mobile_image: string;
+  @Column({ type: 'enum', enum: ['A', 'I'] })
+  status: string;
 
-  @Column({ length: 500, nullable: true })
+  @Column({ name: 'isTrash', type: 'enum', enum: ['0', '1'], default: '0' })
+  is_trash: string;
+
+  @Column()
+  priority: number;
+
+  @Column({ name: 'link_url', length: 250 })
   link: string;
 
-  @Column({ length: 50, nullable: true })
-  link_target: string; // _self, _blank
+  @Column({ type: 'enum', enum: ['adImage', 'adSense'] })
+  ad_type: string;
 
-  @Column({ length: 100, nullable: true })
-  button_text: string;
-
-  @Column({ length: 50 })
-  position: string; // home-hero, home-cta, etc.
-
-  @Column({ type: 'tinyint', default: 1 })
-  status: number;
-
-  @Column({ type: 'int', default: 0 })
-  sort_order: number;
-
-  @Column({ type: 'date', nullable: true })
-  start_date: Date;
-
-  @Column({ type: 'date', nullable: true })
-  end_date: Date;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
+  @Column({ type: 'text' })
+  script: string;
 }
