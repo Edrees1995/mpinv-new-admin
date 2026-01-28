@@ -1,0 +1,175 @@
+<!-- Breadcrumb -->
+<nav class="mb-6">
+    <ol class="flex items-center space-x-2 text-sm">
+        <li>
+            <a href="/" class="text-gray-500 hover:text-gray-700">Dashboard</a>
+        </li>
+        <li class="text-gray-400">/</li>
+        <li>
+            <a href="/projects" class="text-gray-500 hover:text-gray-700">Projects</a>
+        </li>
+        <li class="text-gray-400">/</li>
+        <li class="text-gray-900 font-medium">{{project.name}}</li>
+    </ol>
+</nav>
+
+<!-- Page Header -->
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">{{project.name}}</h1>
+        <p class="mt-1 text-sm text-gray-500">Project details and information</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <a href="/projects/{{project.id}}/edit" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            Edit
+        </a>
+        <button
+            hx-delete="/projects/{{project.id}}"
+            hx-confirm="Are you sure you want to delete this project?"
+            class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+        >
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+            Delete
+        </button>
+        <a href="/projects" class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Back to List
+        </a>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Content -->
+    <div class="lg:col-span-2 space-y-6">
+        <!-- Featured Image -->
+        {{#if project.featured_image}}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+            <div class="aspect-video bg-gray-100">
+                <img src="{{project.featured_image}}" alt="{{project.name}}" class="w-full h-full object-cover">
+            </div>
+        </div>
+        {{/if}}
+
+        <!-- Description -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Description</h2>
+            {{#if project.description}}
+            <div class="prose prose-sm max-w-none text-gray-600">
+                {{{project.description}}}
+            </div>
+            {{else}}
+            <p class="text-gray-500 italic">No description available</p>
+            {{/if}}
+        </div>
+
+        <!-- List Data (JSON) -->
+        {{#if listData}}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">List Data</h2>
+            <pre class="bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto text-gray-700">{{json listData}}</pre>
+        </div>
+        {{/if}}
+
+        <!-- Property Data (JSON) -->
+        {{#if propertyData}}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Property Data</h2>
+            <pre class="bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto text-gray-700">{{json propertyData}}</pre>
+        </div>
+        {{/if}}
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+        <!-- Project Info -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Project Information</h2>
+            <dl class="space-y-4">
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Status</dt>
+                    <dd class="mt-1">
+                        {{#if (eq project.status "A")}}
+                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">
+                            Active
+                        </span>
+                        {{else}}
+                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700">
+                            Inactive
+                        </span>
+                        {{/if}}
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Developer</dt>
+                    <dd class="mt-1 text-sm text-gray-900">
+                        {{#if project.developer}}
+                        <a href="/developers/{{project.developer.id}}" class="text-blue-600 hover:underline">
+                            {{project.developer.name}}
+                        </a>
+                        {{else}}
+                        <span class="text-gray-500">Not assigned</span>
+                        {{/if}}
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Project ID</dt>
+                    <dd class="mt-1 text-sm text-gray-900">#{{project.id}}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Created</dt>
+                    <dd class="mt-1 text-sm text-gray-900">
+                        {{#if project.created_at}}
+                        {{formatDate project.created_at}}
+                        {{else}}
+                        N/A
+                        {{/if}}
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
+                    <dd class="mt-1 text-sm text-gray-900">
+                        {{#if project.updated_at}}
+                        {{formatDate project.updated_at}}
+                        {{else}}
+                        N/A
+                        {{/if}}
+                    </dd>
+                </div>
+            </dl>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+            <div class="space-y-3">
+                <a href="/projects/{{project.id}}/edit" class="w-full flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                    Edit Project
+                </a>
+                <a href="/projects/create" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Create New Project
+                </a>
+                {{#if project.developer}}
+                <a href="/developers/{{project.developer.id}}" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                    View Developer
+                </a>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,135 @@
+<!-- Breadcrumb -->
+<div class="mb-6">
+    <nav class="flex items-center space-x-2 text-sm">
+        <a href="/sub-communities" class="text-gray-500 hover:text-gray-700">Sub-Communities</a>
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+        <a href="/sub-communities/{{subCommunity.id}}" class="text-gray-500 hover:text-gray-700">{{subCommunity.name}}</a>
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+        <span class="text-gray-900 font-medium">Edit</span>
+    </nav>
+</div>
+
+<!-- Page Header -->
+<div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">Edit Sub-Community</h1>
+    <p class="text-gray-600 mt-1">Update {{subCommunity.name}}</p>
+</div>
+
+<form action="/sub-communities/{{subCommunity.id}}?_method=PUT" method="POST" class="max-w-4xl">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-6 space-y-6">
+            <!-- Basic Info -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Sub-Community Name *</label>
+                    <input type="text" name="name" value="{{subCommunity.name}}" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Parent Community *</label>
+                    <select name="community_id" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                        <option value="">Select a community</option>
+                        {{#each communities}}
+                        <option value="{{this.id}}" {{#if (eq this.id ../subCommunity.community_id)}}selected{{/if}}>{{this.name}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Slug</label>
+                    <input type="text" name="slug" value="{{subCommunity.slug}}"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea name="description" rows="4"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">{{subCommunity.description}}</textarea>
+            </div>
+
+            <!-- Image -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                <input type="url" name="image" value="{{subCommunity.image}}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                {{#if subCommunity.image}}
+                <div class="mt-2">
+                    <img src="{{subCommunity.image}}" alt="Current image" class="h-20 w-auto rounded-lg">
+                </div>
+                {{/if}}
+            </div>
+
+            <!-- Location -->
+            <div class="border-t border-gray-200 pt-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Location Coordinates</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Latitude</label>
+                        <input type="number" name="latitude" value="{{subCommunity.latitude}}" step="0.00000001"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Longitude</label>
+                        <input type="number" name="longitude" value="{{subCommunity.longitude}}" step="0.00000001"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEO -->
+            <div class="border-t border-gray-200 pt-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">SEO Settings</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Meta Title</label>
+                        <input type="text" name="meta_title" value="{{subCommunity.meta_title}}"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Meta Description</label>
+                        <textarea name="meta_description" rows="2"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">{{subCommunity.meta_description}}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings -->
+            <div class="border-t border-gray-200 pt-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Settings</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                        <select name="status"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                            <option value="1" {{#if (eq subCommunity.status 1)}}selected{{/if}}>Active</option>
+                            <option value="0" {{#if (eq subCommunity.status 0)}}selected{{/if}}>Inactive</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Sort Order</label>
+                        <input type="number" name="sort_order" value="{{subCommunity.sort_order}}" min="0"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="bg-gray-50 px-6 py-4 border-t border-gray-100 flex items-center justify-end space-x-4">
+            <a href="/sub-communities/{{subCommunity.id}}" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+                Cancel
+            </a>
+            <button type="submit" class="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors">
+                Update Sub-Community
+            </button>
+        </div>
+    </div>
+</form>

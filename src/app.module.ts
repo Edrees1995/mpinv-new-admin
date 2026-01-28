@@ -3,6 +3,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { DatabaseModule } from './database/database.module';
+import { PropertiesModule } from './properties/properties.module';
+import { ProjectsModule } from './projects/projects.module';
+import { DevelopersModule } from './developers/developers.module';
+import { CommunitiesModule } from './communities/communities.module';
+import { SubCommunitiesModule } from './sub-communities/sub-communities.module';
 
 @Module({
   imports: [
@@ -26,6 +31,11 @@ import { DatabaseModule } from './database/database.module';
     }),
     DatabaseModule,
     DashboardModule,
+    PropertiesModule,
+    ProjectsModule,
+    DevelopersModule,
+    CommunitiesModule,
+    SubCommunitiesModule,
   ],
 })
 export class AppModule {}

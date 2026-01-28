@@ -61,6 +61,7 @@ export class DashboardService {
   async getRecentProjects(limit = 5) {
     try {
       return await this.projectRepository.find({
+        relations: ['developer'],
         order: { created_at: 'DESC' },
         take: limit,
       });
