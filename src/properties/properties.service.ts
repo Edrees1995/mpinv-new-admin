@@ -1,14 +1,43 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, FindOptionsWhere } from 'typeorm';
-import {
-  Property,
-  PropertyImage,
-  PropertyAmenity,
-  Category,
-  Subcategory,
-  Community,
-} from '../entities';
+import { XMLParser } from 'fast-xml-parser';
+
+const XML_FEED_URL = 'https://masterpiece.hirevam.com/Website.xml';
+const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes cache
+
+export interface BitrixProperty {
+  reference_number: string;
+  permit_number?: string;
+  offering_type: string;
+  property_type: string;
+  size: string;
+  plot_size?: string;
+  bedroom: string;
+  bathroom: string;
+  service_charge?: string;
+  title_en: string;
+  description_en: string;
+  completion_status?: string;
+  city: string;
+  community: string;
+  sub_community?: string;
+  property_name?: string;
+  developer?: string;
+  floor?: string;
+  parking?: string;
+  furnished?: string;
+  photo?: { url: string | string[] };
+  floor_plan?: { url: string | string[] };
+  agent?: {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+  };
+  private_amenities?: string;
+  commercial_amenities?: string;
+  price: string;
+  last_update?: string;
+}
 
 export interface PaginationResult<T> {
   data: T[];
@@ -20,206 +49,245 @@ export interface PaginationResult<T> {
 
 export interface PropertyFilters {
   search?: string;
-  category_id?: number;
-  subcategory_id?: number;
-  community_id?: number;
-  purpose?: string;
-  status?: string;
+  property_type?: string;
+  offering_type?: string;
+  city?: string;
+  community?: string;
   minPrice?: number;
   maxPrice?: number;
+  bedrooms?: string;
 }
+
+// In-memory cache
+let cachedListings: BitrixProperty[] | null = null;
+let cacheTimestamp: number = 0;
 
 @Injectable()
 export class PropertiesService {
-  constructor(
-    @InjectRepository(Property)
-    private propertyRepository: Repository<Property>,
-    @InjectRepository(PropertyImage)
-    private propertyImageRepository: Repository<PropertyImage>,
-    @InjectRepository(PropertyAmenity)
-    private propertyAmenityRepository: Repository<PropertyAmenity>,
-    @InjectRepository(Category)
-    private categoryRepository: Repository<Category>,
-    @InjectRepository(Subcategory)
-    private subcategoryRepository: Repository<Subcategory>,
-    @InjectRepository(Community)
-    private communityRepository: Repository<Community>,
-  ) {}
+  async fetchFromBitrix(): Promise<BitrixProperty[]> {
+    const now = Date.now();
+
+    // Return cached data if still valid
+    if (cachedListings && now - cacheTimestamp < CACHE_TTL_MS) {
+      return cachedListings;
+    }
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+      const response = await fetch(XML_FEED_URL, {
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`XML feed request failed: ${response.status}`);
+      }
+
+      const xmlData = await response.text();
+      const parser = new XMLParser({
+        ignoreAttributes: false,
+        attributeNamePrefix: '',
+        textNodeName: 'value',
+        trimValues: true,
+      });
+      const parsedData = parser.parse(xmlData);
+
+      let listings: BitrixProperty[] = [];
+      if (parsedData?.list?.property) {
+        listings = Array.isArray(parsedData.list.property)
+          ? parsedData.list.property
+          : [parsedData.list.property];
+      }
+
+      // Update cache
+      cachedListings = listings;
+      cacheTimestamp = now;
+
+      return listings;
+    } catch (error: any) {
+      console.error('Failed to fetch from Bitrix:', error.message);
+
+      // Return stale cache if available
+      if (cachedListings) {
+        return cachedListings;
+      }
+
+      return [];
+    }
+  }
 
   async findAll(
     page = 1,
     limit = 20,
     filters: PropertyFilters = {},
-  ): Promise<PaginationResult<Property>> {
-    try {
-      const skip = (page - 1) * limit;
-      const where: FindOptionsWhere<Property> = {};
+  ): Promise<PaginationResult<BitrixProperty>> {
+    let listings = await this.fetchFromBitrix();
 
-      // Apply filters
-      if (filters.search) {
-        where.title = Like(`%${filters.search}%`);
-      }
-      if (filters.category_id) {
-        where.category_id = filters.category_id;
-      }
-      if (filters.subcategory_id) {
-        where.subcategory_id = filters.subcategory_id;
-      }
-      if (filters.community_id) {
-        where.city = filters.community_id;
-      }
-      if (filters.purpose) {
-        where.purpose = filters.purpose;
-      }
-      if (filters.status) {
-        where.status = filters.status;
-      }
-
-      // Exclude trashed properties
-      where.is_trash = '0';
-
-      const [data, total] = await this.propertyRepository.findAndCount({
-        where,
-        relations: ['category', 'community'],
-        order: { priority: 'DESC', created_at: 'DESC' },
-        skip,
-        take: limit,
-      });
-
-      return {
-        data,
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      };
-    } catch (error) {
-      console.error('Error fetching properties:', error);
-      return {
-        data: [],
-        total: 0,
-        page,
-        limit,
-        totalPages: 0,
-      };
+    // Apply filters
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      listings = listings.filter(
+        (p) =>
+          p.title_en?.toLowerCase().includes(searchLower) ||
+          p.reference_number?.toLowerCase().includes(searchLower) ||
+          p.property_name?.toLowerCase().includes(searchLower) ||
+          p.community?.toLowerCase().includes(searchLower),
+      );
     }
+
+    if (filters.property_type) {
+      listings = listings.filter(
+        (p) =>
+          p.property_type?.toLowerCase() === filters.property_type?.toLowerCase(),
+      );
+    }
+
+    if (filters.offering_type) {
+      const offeringLower = filters.offering_type.toLowerCase();
+      listings = listings.filter((p) =>
+        p.offering_type?.toLowerCase().includes(offeringLower),
+      );
+    }
+
+    if (filters.city) {
+      listings = listings.filter(
+        (p) => p.city?.toLowerCase() === filters.city?.toLowerCase(),
+      );
+    }
+
+    if (filters.community) {
+      listings = listings.filter(
+        (p) => p.community?.toLowerCase() === filters.community?.toLowerCase(),
+      );
+    }
+
+    if (filters.bedrooms) {
+      listings = listings.filter((p) => p.bedroom === filters.bedrooms);
+    }
+
+    if (filters.minPrice) {
+      listings = listings.filter(
+        (p) => parseFloat(p.price) >= filters.minPrice!,
+      );
+    }
+
+    if (filters.maxPrice) {
+      listings = listings.filter(
+        (p) => parseFloat(p.price) <= filters.maxPrice!,
+      );
+    }
+
+    // Calculate pagination
+    const total = listings.length;
+    const totalPages = Math.ceil(total / limit);
+    const skip = (page - 1) * limit;
+    const data = listings.slice(skip, skip + limit);
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages,
+    };
   }
 
-  async findOne(id: number): Promise<Property | null> {
-    try {
-      return await this.propertyRepository.findOne({
-        where: { id },
-        relations: ['category', 'community'],
-      });
-    } catch (error) {
-      console.error('Error fetching property:', error);
-      return null;
-    }
-  }
-
-  async getPropertyImages(propertyId: number): Promise<PropertyImage[]> {
-    try {
-      return await this.propertyImageRepository.find({
-        where: { ad_id: propertyId },
-        order: { sort_order: 'ASC', is_featured: 'DESC' },
-      });
-    } catch (error) {
-      console.error('Error fetching property images:', error);
-      return [];
-    }
-  }
-
-  async getPropertyAmenities(propertyId: number): Promise<PropertyAmenity[]> {
-    try {
-      return await this.propertyAmenityRepository.find({
-        where: { ad_id: propertyId },
-        relations: ['amenity'],
-      });
-    } catch (error) {
-      console.error('Error fetching property amenities:', error);
-      return [];
-    }
-  }
-
-  async getCategories(): Promise<Category[]> {
-    try {
-      return await this.categoryRepository.find({
-        where: { status: 1 },
-        order: { sort_order: 'ASC', name: 'ASC' },
-      });
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-      return [];
-    }
-  }
-
-  async getSubcategories(categoryId?: number): Promise<Subcategory[]> {
-    try {
-      const where: FindOptionsWhere<Subcategory> = { status: 1 };
-      if (categoryId) {
-        where.category_id = categoryId;
-      }
-      return await this.subcategoryRepository.find({
-        where,
-        order: { sort_order: 'ASC', name: 'ASC' },
-      });
-    } catch (error) {
-      console.error('Error fetching subcategories:', error);
-      return [];
-    }
-  }
-
-  async getCommunities(): Promise<Community[]> {
-    try {
-      return await this.communityRepository.find({
-        order: { priority: 'DESC', name: 'ASC' },
-      });
-    } catch (error) {
-      console.error('Error fetching communities:', error);
-      return [];
-    }
+  async findOne(referenceNumber: string): Promise<BitrixProperty | null> {
+    const listings = await this.fetchFromBitrix();
+    return (
+      listings.find((p) => p.reference_number === referenceNumber) || null
+    );
   }
 
   async count(): Promise<number> {
-    try {
-      return await this.propertyRepository.count({
-        where: { is_trash: '0' },
-      });
-    } catch (error) {
-      console.error('Error counting properties:', error);
-      return 0;
-    }
+    const listings = await this.fetchFromBitrix();
+    return listings.length;
   }
 
-  formatPrice(price: number): string {
-    if (!price) return 'Price on Request';
+  // Get unique values for filters
+  async getFilterOptions(): Promise<{
+    propertyTypes: string[];
+    offeringTypes: string[];
+    cities: string[];
+    communities: string[];
+    bedrooms: string[];
+  }> {
+    const listings = await this.fetchFromBitrix();
+
+    const propertyTypes = [
+      ...new Set(listings.map((p) => p.property_type).filter(Boolean)),
+    ].sort();
+    const offeringTypes = [
+      ...new Set(listings.map((p) => p.offering_type).filter(Boolean)),
+    ].sort();
+    const cities = [
+      ...new Set(listings.map((p) => p.city).filter(Boolean)),
+    ].sort();
+    const communities = [
+      ...new Set(listings.map((p) => p.community).filter(Boolean)),
+    ].sort();
+    const bedrooms = [
+      ...new Set(listings.map((p) => p.bedroom).filter(Boolean)),
+    ].sort((a, b) => {
+      if (a === 'Studio') return -1;
+      if (b === 'Studio') return 1;
+      return parseInt(a) - parseInt(b);
+    });
+
+    return {
+      propertyTypes,
+      offeringTypes,
+      cities,
+      communities,
+      bedrooms,
+    };
+  }
+
+  // Helper methods
+  getPhotos(property: BitrixProperty): string[] {
+    if (!property.photo?.url) return [];
+    return Array.isArray(property.photo.url)
+      ? property.photo.url
+      : [property.photo.url];
+  }
+
+  getFloorPlans(property: BitrixProperty): string[] {
+    if (!property.floor_plan?.url) return [];
+    return Array.isArray(property.floor_plan.url)
+      ? property.floor_plan.url
+      : [property.floor_plan.url];
+  }
+
+  formatPrice(price: string | number): string {
+    const numPrice = typeof price === 'string' ? parseFloat(price) : price;
+    if (!numPrice || isNaN(numPrice)) return 'Price on Request';
     return new Intl.NumberFormat('en-AE', {
       style: 'currency',
       currency: 'AED',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(price);
+    }).format(numPrice);
   }
 
-  getPurposeLabel(purpose: string): string {
-    switch (purpose) {
-      case 'S':
-        return 'For Sale';
-      case 'R':
-        return 'For Rent';
-      default:
-        return purpose || 'Unknown';
+  getAmenities(property: BitrixProperty): string[] {
+    const amenities: string[] = [];
+    if (property.private_amenities) {
+      amenities.push(
+        ...property.private_amenities.split(',').map((a) => a.trim()),
+      );
     }
+    if (property.commercial_amenities) {
+      amenities.push(
+        ...property.commercial_amenities.split(',').map((a) => a.trim()),
+      );
+    }
+    return [...new Set(amenities)]; // Remove duplicates
   }
 
-  getStatusLabel(status: string): string {
-    switch (status) {
-      case 'A':
-        return 'Active';
-      case 'I':
-        return 'Inactive';
-      default:
-        return status || 'Unknown';
-    }
+  clearCache(): void {
+    cachedListings = null;
+    cacheTimestamp = 0;
   }
 }

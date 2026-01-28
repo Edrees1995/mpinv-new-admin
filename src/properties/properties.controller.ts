@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Query, Render, ParseIntPipe, DefaultValuePipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Render,
+  ParseIntPipe,
+  DefaultValuePipe,
+} from '@nestjs/common';
 import { PropertiesService, PropertyFilters } from './properties.service';
 
 @Controller('properties')
@@ -11,35 +19,32 @@ export class PropertiesController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Query('search') search?: string,
-    @Query('category_id') categoryId?: string,
-    @Query('subcategory_id') subcategoryId?: string,
-    @Query('community_id') communityId?: string,
-    @Query('purpose') purpose?: string,
-    @Query('status') status?: string,
+    @Query('property_type') propertyType?: string,
+    @Query('offering_type') offeringType?: string,
+    @Query('city') city?: string,
+    @Query('community') community?: string,
+    @Query('bedrooms') bedrooms?: string,
   ) {
     const filters: PropertyFilters = {
       search,
-      category_id: categoryId ? parseInt(categoryId, 10) : undefined,
-      subcategory_id: subcategoryId ? parseInt(subcategoryId, 10) : undefined,
-      community_id: communityId ? parseInt(communityId, 10) : undefined,
-      purpose,
-      status,
+      property_type: propertyType,
+      offering_type: offeringType,
+      city,
+      community,
+      bedrooms,
     };
 
-    const [result, categories, subcategories, communities] = await Promise.all([
+    const [result, filterOptions] = await Promise.all([
       this.propertiesService.findAll(page, limit, filters),
-      this.propertiesService.getCategories(),
-      this.propertiesService.getSubcategories(),
-      this.propertiesService.getCommunities(),
+      this.propertiesService.getFilterOptions(),
     ]);
 
     // Format properties for display
     const properties = result.data.map((property) => ({
       ...property,
-      formattedPrice: this.propertiesService.formatPrice(Number(property.price)),
-      purposeLabel: this.propertiesService.getPurposeLabel(property.purpose),
-      statusLabel: this.propertiesService.getStatusLabel(property.status),
-      isActive: property.status === 'A',
+      formattedPrice: this.propertiesService.formatPrice(property.price),
+      photos: this.propertiesService.getPhotos(property),
+      firstPhoto: this.propertiesService.getPhotos(property)[0] || null,
     }));
 
     // Generate pagination range
@@ -49,7 +54,7 @@ export class PropertiesController {
     );
 
     return {
-      title: 'Properties',
+      title: 'Properties (Bitrix)',
       properties,
       pagination: {
         ...result,
@@ -61,23 +66,22 @@ export class PropertiesController {
       },
       filters: {
         search: search || '',
-        category_id: categoryId || '',
-        subcategory_id: subcategoryId || '',
-        community_id: communityId || '',
-        purpose: purpose || '',
-        status: status || '',
+        property_type: propertyType || '',
+        offering_type: offeringType || '',
+        city: city || '',
+        community: community || '',
+        bedrooms: bedrooms || '',
       },
-      categories,
-      subcategories,
-      communities,
-      bitrixNote: 'Properties are synced from Bitrix24 XML feeds. This is a read-only view.',
+      filterOptions,
+      bitrixNote:
+        'Properties are fetched live from Bitrix24 XML feed. This is a read-only view.',
     };
   }
 
-  @Get(':id')
+  @Get(':ref')
   @Render('properties/view')
-  async view(@Param('id', ParseIntPipe) id: number) {
-    const property = await this.propertiesService.findOne(id);
+  async view(@Param('ref') ref: string) {
+    const property = await this.propertiesService.findOne(ref);
 
     if (!property) {
       return {
@@ -87,36 +91,27 @@ export class PropertiesController {
       };
     }
 
-    const [images, amenities] = await Promise.all([
-      this.propertiesService.getPropertyImages(id),
-      this.propertiesService.getPropertyAmenities(id),
-    ]);
+    const photos = this.propertiesService.getPhotos(property);
+    const floorPlans = this.propertiesService.getFloorPlans(property);
+    const amenities = this.propertiesService.getAmenities(property);
 
     // Format property for display
     const formattedProperty = {
       ...property,
-      formattedPrice: this.propertiesService.formatPrice(Number(property.price)),
-      purposeLabel: this.propertiesService.getPurposeLabel(property.purpose),
-      statusLabel: this.propertiesService.getStatusLabel(property.status),
-      isActive: property.status === 'A',
-      formattedDate: property.created_at
-        ? new Date(property.created_at).toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-          })
-        : 'N/A',
+      formattedPrice: this.propertiesService.formatPrice(property.price),
+      formattedSize: property.size ? `${property.size} sq.ft` : 'N/A',
+      formattedPlotSize: property.plot_size
+        ? `${property.plot_size} sq.ft`
+        : null,
     };
 
-    // Get featured image
-    const featuredImage = images.find((img) => img.is_featured === 1) || images[0];
-
     return {
-      title: property.title,
+      title: property.title_en,
       property: formattedProperty,
-      images,
-      featuredImage,
-      amenities: amenities.map((pa) => pa.amenity).filter(Boolean),
+      photos,
+      featuredPhoto: photos[0] || null,
+      floorPlans,
+      amenities,
       bitrixNote: 'This property is synced from Bitrix24. Editing is disabled.',
     };
   }
@@ -125,7 +120,9 @@ export class PropertiesController {
     currentPage: number,
     totalPages: number,
   ): Array<{ page: number; isCurrent: boolean } | { isEllipsis: boolean }> {
-    const range: Array<{ page: number; isCurrent: boolean } | { isEllipsis: boolean }> = [];
+    const range: Array<
+      { page: number; isCurrent: boolean } | { isEllipsis: boolean }
+    > = [];
     const delta = 2;
 
     for (let i = 1; i <= totalPages; i++) {
@@ -135,7 +132,10 @@ export class PropertiesController {
         (i >= currentPage - delta && i <= currentPage + delta)
       ) {
         range.push({ page: i, isCurrent: i === currentPage });
-      } else if (range.length > 0 && !('isEllipsis' in range[range.length - 1])) {
+      } else if (
+        range.length > 0 &&
+        !('isEllipsis' in range[range.length - 1])
+      ) {
         range.push({ isEllipsis: true });
       }
     }
