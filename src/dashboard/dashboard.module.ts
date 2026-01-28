@@ -8,6 +8,7 @@ import {
   Community,
   Contact,
 } from '../entities';
+import { PropertiesModule } from '../properties/properties.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import {
       Community,
       Contact,
     ]),
+    PropertiesModule,
   ],
   controllers: [DashboardController],
   providers: [DashboardService],

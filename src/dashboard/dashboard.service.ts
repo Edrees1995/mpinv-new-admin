@@ -7,6 +7,7 @@ import {
   Community,
   Contact,
 } from '../entities';
+import { PropertiesService } from '../properties/properties.service';
 
 @Injectable()
 export class DashboardService {
@@ -19,26 +20,35 @@ export class DashboardService {
     private communityRepository: Repository<Community>,
     @InjectRepository(Contact)
     private contactRepository: Repository<Contact>,
+    private propertiesService: PropertiesService,
   ) {}
 
   async getStats() {
     try {
       const [
+        propertiesCount,
         projectsCount,
         developersCount,
         communitiesCount,
         contactsCount,
         unreadContactsCount,
       ] = await Promise.all([
-        this.projectRepository.count(),
-        this.developerRepository.count(),
+        this.propertiesService.count(),
+        this.projectRepository.count({
+          where: [
+            { trash: '0' },
+            { trash: '' },
+            { trash: null as any },
+          ],
+        }),
+        this.developerRepository.count({ where: { is_trash: '0' } }),
         this.communityRepository.count(),
         this.contactRepository.count(),
         this.contactRepository.count({ where: { is_read: Not(Equal('1')) } }),
       ]);
 
       return {
-        properties: 'Bitrix24 API', // Properties come from Bitrix24 XML feeds
+        properties: propertiesCount,
         projects: projectsCount,
         developers: developersCount,
         communities: communitiesCount,
@@ -48,7 +58,7 @@ export class DashboardService {
     } catch (error) {
       console.error('Stats error:', error);
       return {
-        properties: 'Bitrix24 API',
+        properties: 0,
         projects: 0,
         developers: 0,
         communities: 0,
