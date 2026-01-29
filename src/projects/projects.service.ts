@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { OffplanProject, Developer, Community, SubCommunity, Category, Subcategory, AdImage, AdPropertyType, AdFloorPlan, AdPaymentPlan } from '../entities';
 
-// Base URL for images stored in the old admin panel
-const IMAGE_BASE_URL = 'https://admin.mpinv.cloud/uploads/ads/';
+// Base URL for images
+const IMAGE_BASE_URL = (process.env.IMAGE_BASE_URL || '') + '/uploads/ads/';
 const OFFPLAN_SECTION_ID = 3;
 
 export interface PaginationResult<T> {
@@ -363,7 +363,7 @@ export class ProjectsService {
           result[field] = result[field].replace(IMAGE_BASE_URL, '');
         }
         // Also strip new admin URL prefix
-        const newAdminUrl = 'https://new-admin.mpinv.cloud/uploads/ads/';
+        const newAdminUrl = (process.env.IMAGE_BASE_URL || '') + '/uploads/ads/';
         if (result[field].startsWith(newAdminUrl)) {
           result[field] = result[field].replace(newAdminUrl, '');
         }
@@ -495,7 +495,7 @@ export class ProjectsService {
   async updatePropertyTypes(projectId: number, propertyTypes: any[]): Promise<void> {
     if (!propertyTypes || !Array.isArray(propertyTypes)) return;
 
-    const NEW_ADMIN_IMAGE_URL = 'https://new-admin.mpinv.cloud/uploads/ads/';
+    const NEW_ADMIN_IMAGE_URL = (process.env.IMAGE_BASE_URL || '') + '/uploads/ads/';
 
     for (const pt of propertyTypes) {
       // Handle image URLs - keep full URL for new admin uploads, strip old admin base URL

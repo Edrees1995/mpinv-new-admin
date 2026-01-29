@@ -427,7 +427,7 @@ export class ApiController {
 
   @All('*path')
   async proxyToOldAdmin(@Req() req: Request, @Res() res: Response) {
-    const oldAdminBase = 'https://admin.mpinv.cloud/api/site/';
+    const oldAdminBase = (process.env.IMAGE_BASE_URL || 'https://admin.mpinv.cloud') + '/api/site/';
     const fullPath = req.originalUrl.replace(/^\/api\/site\/?/, '');
     const [path, qs] = fullPath.includes('?') ? fullPath.split('?', 2) : [fullPath, ''];
     const url = qs ? `${oldAdminBase}${path}?${qs}` : `${oldAdminBase}${path}`;

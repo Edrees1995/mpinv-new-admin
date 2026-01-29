@@ -10,7 +10,7 @@ import {
 import { PropertiesService } from '../properties/properties.service';
 import { ProjectsService } from '../projects/projects.service';
 
-const IMAGE_BASE_URL = 'https://admin.mpinv.cloud/uploads/ads/';
+const IMAGE_BASE_URL = (process.env.IMAGE_BASE_URL || '') + '/uploads/ads/';
 
 @Injectable()
 export class DashboardService {

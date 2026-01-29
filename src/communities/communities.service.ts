@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import { Community, SubCommunity } from '../entities';
 
-// Base URL for images stored in the old admin panel
-const IMAGE_BASE_URL = 'https://admin.mpinv.cloud/uploads/ads/';
+// Base URL for images
+const IMAGE_BASE_URL = (process.env.IMAGE_BASE_URL || '') + '/uploads/ads/';
 
 export interface PaginationResult<T> {
   data: T[];

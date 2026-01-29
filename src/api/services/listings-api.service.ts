@@ -15,7 +15,7 @@ import {
   AdPaymentPlan,
 } from '../../entities';
 
-const IMAGE_BASE = 'https://admin.mpinv.cloud/uploads/ads/';
+const IMAGE_BASE = (process.env.IMAGE_BASE_URL || '') + '/uploads/ads/';
 
 function imgUrl(url: string | null | undefined): string {
   if (!url) return '';

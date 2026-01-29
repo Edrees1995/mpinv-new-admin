@@ -22,9 +22,7 @@ import { ProjectsService } from './projects.service';
 import type { CreateProjectDto, UpdateProjectDto } from './projects.service';
 
 // Configure multer storage for property type images - NEW ADMIN SEPARATE
-const uploadDir = process.env.NODE_ENV === 'production'
-  ? '/var/www/new-admin.mpinv.cloud/public/uploads/ads'
-  : join(process.cwd(), 'public', 'uploads', 'ads');
+const uploadDir = process.env.UPLOAD_DIR || join(process.cwd(), 'public', 'uploads', 'ads');
 
 const propertyTypeStorage = diskStorage({
   destination: uploadDir,
@@ -35,8 +33,8 @@ const propertyTypeStorage = diskStorage({
   },
 });
 
-// New admin image base URL
-const NEW_ADMIN_IMAGE_URL = 'https://new-admin.mpinv.cloud/uploads/ads/';
+// Image base URL from env
+const NEW_ADMIN_IMAGE_URL = (process.env.IMAGE_BASE_URL || '') + '/uploads/ads/';
 
 // HTML escape function to prevent XSS
 function escapeHtml(text: string | null | undefined): string {
