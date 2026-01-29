@@ -60,7 +60,10 @@
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center">
                             {{#if this.logo}}
-                            <img src="{{this.logo}}" alt="{{this.name}}" class="w-10 h-10 rounded-lg object-cover mr-3">
+                            <img src="{{this.logo}}" alt="{{this.name}}" class="w-10 h-10 rounded-lg object-cover mr-3" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                            <div class="w-10 h-10 bg-purple-100 rounded-lg items-center justify-center mr-3" style="display:none">
+                                <span class="text-purple-600 font-medium">{{substring this.name 0 1}}</span>
+                            </div>
                             {{else}}
                             <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
                                 <span class="text-purple-600 font-medium">{{substring this.name 0 1}}</span>
@@ -142,15 +145,19 @@
             </p>
             <div class="flex items-center space-x-2">
                 {{#if pagination.hasPrev}}
-                <a href="/developers?page={{pagination.prevPage}}{{#if filters.search}}&search={{filters.search}}{{/if}}{{#if filters.status}}&status={{filters.status}}{{/if}}"
+                <a href="/developers?page={{pagination.prevPage}}{{#if filters.search}}&search={{filters.search}}{{/if}}{{#if filters.status}}&status={{filters.status}}{{/if}}{{#if filters.featured}}&featured={{filters.featured}}{{/if}}"
                    class="px-3 py-2 text-sm text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Previous</a>
                 {{/if}}
                 {{#each pagination.pages}}
-                <a href="/developers?page={{this.number}}{{#if ../filters.search}}&search={{../filters.search}}{{/if}}{{#if ../filters.status}}&status={{../filters.status}}{{/if}}"
+                {{#if this.ellipsis}}
+                <span class="px-2 py-2 text-sm text-gray-400">...</span>
+                {{else}}
+                <a href="/developers?page={{this.number}}{{#if ../filters.search}}&search={{../filters.search}}{{/if}}{{#if ../filters.status}}&status={{../filters.status}}{{/if}}{{#if ../filters.featured}}&featured={{../filters.featured}}{{/if}}"
                    class="px-3 py-2 text-sm {{#if this.active}}bg-purple-600 text-white{{else}}text-gray-600 bg-white border border-gray-300 hover:bg-gray-50{{/if}} rounded-lg">{{this.number}}</a>
+                {{/if}}
                 {{/each}}
                 {{#if pagination.hasNext}}
-                <a href="/developers?page={{pagination.nextPage}}{{#if filters.search}}&search={{filters.search}}{{/if}}{{#if filters.status}}&status={{filters.status}}{{/if}}"
+                <a href="/developers?page={{pagination.nextPage}}{{#if filters.search}}&search={{filters.search}}{{/if}}{{#if filters.status}}&status={{filters.status}}{{/if}}{{#if filters.featured}}&featured={{filters.featured}}{{/if}}"
                    class="px-3 py-2 text-sm text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Next</a>
                 {{/if}}
             </div>

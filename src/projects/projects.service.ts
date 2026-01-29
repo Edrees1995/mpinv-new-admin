@@ -117,6 +117,17 @@ export class ProjectsService {
     if (project.featured_image && !project.featured_image.startsWith('http')) {
       project.featured_image = IMAGE_BASE_URL + project.featured_image;
     }
+    // If no featured image, use first gallery image
+    if (!project.featured_image && project.images && project.images.length > 0) {
+      const firstImage = project.images.find(
+        (img) => img.is_trash === '0' && img.status === 'A' && img.image_name,
+      );
+      if (firstImage) {
+        project.featured_image = firstImage.image_name.startsWith('http')
+          ? firstImage.image_name
+          : IMAGE_BASE_URL + firstImage.image_name;
+      }
+    }
     if (project.developer_logo && !project.developer_logo.startsWith('http')) {
       project.developer_logo = IMAGE_BASE_URL + project.developer_logo;
     }
@@ -204,6 +215,7 @@ export class ProjectsService {
       .createQueryBuilder('project')
       .leftJoinAndSelect('project.developer', 'developer')
       .leftJoinAndSelect('project.community', 'community')
+      .leftJoinAndSelect('project.images', 'images')
       .where('project.section_id = :sectionId', { sectionId: OFFPLAN_SECTION_ID })
       .orderBy('project.created_at', 'DESC');
 

@@ -137,12 +137,12 @@
                 <a href="/sub-communities?page={{pagination.prevPage}}{{#if filters.search}}&search={{filters.search}}{{/if}}{{#if filters.community_id}}&community_id={{filters.community_id}}{{/if}}"
                    class="px-3 py-2 text-sm text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Previous</a>
                 {{/if}}
-                {{#each pagination.range}}
-                {{#if this.isEllipsis}}
-                <span class="px-3 py-2 text-sm text-gray-400">...</span>
+                {{#each pagination.pages}}
+                {{#if this.ellipsis}}
+                <span class="px-2 py-2 text-sm text-gray-400">...</span>
                 {{else}}
-                <a href="/sub-communities?page={{this.page}}{{#if ../filters.search}}&search={{../filters.search}}{{/if}}{{#if ../filters.community_id}}&community_id={{../filters.community_id}}{{/if}}"
-                   class="px-3 py-2 text-sm {{#if this.isCurrent}}bg-teal-600 text-white{{else}}text-gray-600 bg-white border border-gray-300 hover:bg-gray-50{{/if}} rounded-lg">{{this.page}}</a>
+                <a href="/sub-communities?page={{this.number}}{{#if ../filters.search}}&search={{../filters.search}}{{/if}}{{#if ../filters.community_id}}&community_id={{../filters.community_id}}{{/if}}"
+                   class="px-3 py-2 text-sm {{#if this.active}}bg-purple-600 text-white{{else}}text-gray-600 bg-white border border-gray-300 hover:bg-gray-50{{/if}} rounded-lg">{{this.number}}</a>
                 {{/if}}
                 {{/each}}
                 {{#if pagination.hasNext}}

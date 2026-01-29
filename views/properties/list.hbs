@@ -223,46 +223,30 @@
 
     <!-- Pagination -->
     {{#if (gt pagination.totalPages 1)}}
-    <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
-        <div class="text-sm text-gray-500">
-            Showing {{#if properties.length}}{{add (multiply (subtract pagination.page 1) pagination.limit) 1}}{{else}}0{{/if}} to {{min (multiply pagination.page pagination.limit) pagination.total}} of {{pagination.total}} properties
-        </div>
-        <nav class="flex items-center space-x-1">
-            {{#if pagination.hasPrev}}
-            <a
-                href="/properties?page={{pagination.prevPage}}{{#if filters.search}}&search={{filters.search}}{{/if}}{{#if filters.property_type}}&property_type={{filters.property_type}}{{/if}}{{#if filters.offering_type}}&offering_type={{filters.offering_type}}{{/if}}{{#if filters.city}}&city={{filters.city}}{{/if}}{{#if filters.community}}&community={{filters.community}}{{/if}}{{#if filters.bedrooms}}&bedrooms={{filters.bedrooms}}{{/if}}"
-                class="px-3 py-2 rounded-lg border border-gray-300 text-gray-500 hover:bg-gray-50 transition-colors"
-            >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
-            </a>
-            {{/if}}
-
-            {{#each pagination.range}}
-                {{#if this.isEllipsis}}
-                <span class="px-3 py-2 text-gray-400">...</span>
-                {{else}}
-                <a
-                    href="/properties?page={{this.page}}{{#if ../filters.search}}&search={{../filters.search}}{{/if}}{{#if ../filters.property_type}}&property_type={{../filters.property_type}}{{/if}}{{#if ../filters.offering_type}}&offering_type={{../filters.offering_type}}{{/if}}{{#if ../filters.city}}&city={{../filters.city}}{{/if}}{{#if ../filters.community}}&community={{../filters.community}}{{/if}}{{#if ../filters.bedrooms}}&bedrooms={{../filters.bedrooms}}{{/if}}"
-                    class="px-3 py-2 rounded-lg {{#if this.isCurrent}}bg-blue-600 text-white{{else}}border border-gray-300 text-gray-700 hover:bg-gray-50{{/if}} transition-colors"
-                >
-                    {{this.page}}
-                </a>
+    <div class="bg-gray-50 px-6 py-4 border-t border-gray-100">
+        <div class="flex flex-col sm:flex-row items-center justify-between">
+            <p class="text-sm text-gray-600 mb-4 sm:mb-0">
+                Showing page {{pagination.page}} of {{pagination.totalPages}} ({{pagination.total}} total)
+            </p>
+            <div class="flex items-center space-x-2">
+                {{#if pagination.hasPrev}}
+                <a href="/properties?page={{pagination.prevPage}}{{#if filters.search}}&search={{filters.search}}{{/if}}{{#if filters.property_type}}&property_type={{filters.property_type}}{{/if}}{{#if filters.offering_type}}&offering_type={{filters.offering_type}}{{/if}}{{#if filters.city}}&city={{filters.city}}{{/if}}{{#if filters.community}}&community={{filters.community}}{{/if}}{{#if filters.bedrooms}}&bedrooms={{filters.bedrooms}}{{/if}}"
+                   class="px-3 py-2 text-sm text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Previous</a>
                 {{/if}}
-            {{/each}}
-
-            {{#if pagination.hasNext}}
-            <a
-                href="/properties?page={{pagination.nextPage}}{{#if filters.search}}&search={{filters.search}}{{/if}}{{#if filters.property_type}}&property_type={{filters.property_type}}{{/if}}{{#if filters.offering_type}}&offering_type={{filters.offering_type}}{{/if}}{{#if filters.city}}&city={{filters.city}}{{/if}}{{#if filters.community}}&community={{filters.community}}{{/if}}{{#if filters.bedrooms}}&bedrooms={{filters.bedrooms}}{{/if}}"
-                class="px-3 py-2 rounded-lg border border-gray-300 text-gray-500 hover:bg-gray-50 transition-colors"
-            >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
-            </a>
-            {{/if}}
-        </nav>
+                {{#each pagination.pages}}
+                {{#if this.ellipsis}}
+                <span class="px-2 py-2 text-sm text-gray-400">...</span>
+                {{else}}
+                <a href="/properties?page={{this.number}}{{#if ../filters.search}}&search={{../filters.search}}{{/if}}{{#if ../filters.property_type}}&property_type={{../filters.property_type}}{{/if}}{{#if ../filters.offering_type}}&offering_type={{../filters.offering_type}}{{/if}}{{#if ../filters.city}}&city={{../filters.city}}{{/if}}{{#if ../filters.community}}&community={{../filters.community}}{{/if}}{{#if ../filters.bedrooms}}&bedrooms={{../filters.bedrooms}}{{/if}}"
+                   class="px-3 py-2 text-sm {{#if this.active}}bg-purple-600 text-white{{else}}text-gray-600 bg-white border border-gray-300 hover:bg-gray-50{{/if}} rounded-lg">{{this.number}}</a>
+                {{/if}}
+                {{/each}}
+                {{#if pagination.hasNext}}
+                <a href="/properties?page={{pagination.nextPage}}{{#if filters.search}}&search={{filters.search}}{{/if}}{{#if filters.property_type}}&property_type={{filters.property_type}}{{/if}}{{#if filters.offering_type}}&offering_type={{filters.offering_type}}{{/if}}{{#if filters.city}}&city={{filters.city}}{{/if}}{{#if filters.community}}&community={{filters.community}}{{/if}}{{#if filters.bedrooms}}&bedrooms={{filters.bedrooms}}{{/if}}"
+                   class="px-3 py-2 text-sm text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Next</a>
+                {{/if}}
+            </div>
+        </div>
     </div>
     {{/if}}
     {{else}}

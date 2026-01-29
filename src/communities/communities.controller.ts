@@ -32,6 +32,26 @@ export class CommunitiesController {
 
     const result = await this.communitiesService.findAll(pageNum, limit, search);
 
+    // Generate truncated pagination array
+    const pages: Array<{ number: number; active: boolean; ellipsis?: boolean }> = [];
+    const totalPg = result.totalPages;
+    const current = result.page;
+    if (totalPg <= 7) {
+      for (let i = 1; i <= totalPg; i++) {
+        pages.push({ number: i, active: i === current });
+      }
+    } else {
+      pages.push({ number: 1, active: current === 1 });
+      if (current > 3) pages.push({ number: 0, active: false, ellipsis: true });
+      const start = Math.max(2, current - 1);
+      const end = Math.min(totalPg - 1, current + 1);
+      for (let i = start; i <= end; i++) {
+        pages.push({ number: i, active: i === current });
+      }
+      if (current < totalPg - 2) pages.push({ number: 0, active: false, ellipsis: true });
+      pages.push({ number: totalPg, active: current === totalPg });
+    }
+
     return {
       title: 'Communities',
       communities: result.data,
@@ -40,8 +60,11 @@ export class CommunitiesController {
         totalPages: result.totalPages,
         total: result.total,
         limit: result.limit,
+        pages,
         hasNext: result.page < result.totalPages,
         hasPrev: result.page > 1,
+        prevPage: result.page - 1,
+        nextPage: result.page + 1,
       },
       search: search || '',
     };
@@ -138,6 +161,26 @@ export class CommunitiesController {
 
     const result = await this.communitiesService.findAll(pageNum, limit, search);
 
+    // Generate truncated pagination array
+    const pages2: Array<{ number: number; active: boolean; ellipsis?: boolean }> = [];
+    const totalPg2 = result.totalPages;
+    const current2 = result.page;
+    if (totalPg2 <= 7) {
+      for (let i = 1; i <= totalPg2; i++) {
+        pages2.push({ number: i, active: i === current2 });
+      }
+    } else {
+      pages2.push({ number: 1, active: current2 === 1 });
+      if (current2 > 3) pages2.push({ number: 0, active: false, ellipsis: true });
+      const start = Math.max(2, current2 - 1);
+      const end = Math.min(totalPg2 - 1, current2 + 1);
+      for (let i = start; i <= end; i++) {
+        pages2.push({ number: i, active: i === current2 });
+      }
+      if (current2 < totalPg2 - 2) pages2.push({ number: 0, active: false, ellipsis: true });
+      pages2.push({ number: totalPg2, active: current2 === totalPg2 });
+    }
+
     return {
       communities: result.data,
       pagination: {
@@ -145,8 +188,11 @@ export class CommunitiesController {
         totalPages: result.totalPages,
         total: result.total,
         limit: result.limit,
+        pages: pages2,
         hasNext: result.page < result.totalPages,
         hasPrev: result.page > 1,
+        prevPage: result.page - 1,
+        nextPage: result.page + 1,
       },
       search: search || '',
       layout: false,

@@ -47,22 +47,45 @@ export class PropertiesController {
       firstPhoto: this.propertiesService.getPhotos(property)[0] || null,
     }));
 
-    // Generate pagination range
-    const paginationRange = this.generatePaginationRange(
-      result.page,
-      result.totalPages,
-    );
+    // Generate truncated pagination array
+    const pages: Array<{
+      number: number;
+      active: boolean;
+      ellipsis?: boolean;
+    }> = [];
+    const totalPg = result.totalPages;
+    const current = result.page;
+
+    if (totalPg <= 7) {
+      for (let i = 1; i <= totalPg; i++) {
+        pages.push({ number: i, active: i === current });
+      }
+    } else {
+      pages.push({ number: 1, active: current === 1 });
+      if (current > 3) {
+        pages.push({ number: 0, active: false, ellipsis: true });
+      }
+      const start = Math.max(2, current - 1);
+      const end = Math.min(totalPg - 1, current + 1);
+      for (let i = start; i <= end; i++) {
+        pages.push({ number: i, active: i === current });
+      }
+      if (current < totalPg - 2) {
+        pages.push({ number: 0, active: false, ellipsis: true });
+      }
+      pages.push({ number: totalPg, active: current === totalPg });
+    }
 
     return {
       title: 'Properties (Bitrix)',
       properties,
       pagination: {
         ...result,
+        pages,
         hasPrev: page > 1,
         hasNext: page < result.totalPages,
         prevPage: page - 1,
         nextPage: page + 1,
-        range: paginationRange,
       },
       filters: {
         search: search || '',
@@ -116,30 +139,4 @@ export class PropertiesController {
     };
   }
 
-  private generatePaginationRange(
-    currentPage: number,
-    totalPages: number,
-  ): Array<{ page: number; isCurrent: boolean } | { isEllipsis: boolean }> {
-    const range: Array<
-      { page: number; isCurrent: boolean } | { isEllipsis: boolean }
-    > = [];
-    const delta = 2;
-
-    for (let i = 1; i <= totalPages; i++) {
-      if (
-        i === 1 ||
-        i === totalPages ||
-        (i >= currentPage - delta && i <= currentPage + delta)
-      ) {
-        range.push({ page: i, isCurrent: i === currentPage });
-      } else if (
-        range.length > 0 &&
-        !('isEllipsis' in range[range.length - 1])
-      ) {
-        range.push({ isEllipsis: true });
-      }
-    }
-
-    return range;
-  }
 }

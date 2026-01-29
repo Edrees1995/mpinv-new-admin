@@ -45,13 +45,40 @@ export class DevelopersController {
       limit,
     });
 
-    // Generate pagination array for template
-    const pages: Array<{ number: number; active: boolean }> = [];
-    for (let i = 1; i <= result.totalPages; i++) {
-      pages.push({
-        number: i,
-        active: i === result.page,
-      });
+    // Generate truncated pagination array for template
+    const pages: Array<{
+      number: number;
+      active: boolean;
+      ellipsis?: boolean;
+    }> = [];
+    const total = result.totalPages;
+    const current = result.page;
+
+    if (total <= 7) {
+      for (let i = 1; i <= total; i++) {
+        pages.push({ number: i, active: i === current });
+      }
+    } else {
+      // Always show first page
+      pages.push({ number: 1, active: current === 1 });
+
+      if (current > 3) {
+        pages.push({ number: 0, active: false, ellipsis: true });
+      }
+
+      // Pages around current
+      const start = Math.max(2, current - 1);
+      const end = Math.min(total - 1, current + 1);
+      for (let i = start; i <= end; i++) {
+        pages.push({ number: i, active: i === current });
+      }
+
+      if (current < total - 2) {
+        pages.push({ number: 0, active: false, ellipsis: true });
+      }
+
+      // Always show last page
+      pages.push({ number: total, active: current === total });
     }
 
     return {
@@ -213,7 +240,10 @@ export class DevelopersController {
               <div class="flex items-center">
                 ${
                   developer.logo
-                    ? `<img src="${safeLogo}" alt="${safeName}" class="w-10 h-10 rounded-lg object-cover mr-3">`
+                    ? `<img src="${safeLogo}" alt="${safeName}" class="w-10 h-10 rounded-lg object-cover mr-3" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                       <div class="w-10 h-10 bg-purple-100 rounded-lg items-center justify-center mr-3" style="display:none">
+                        <span class="text-purple-600 font-medium">${escapeHtml(developer.name?.charAt(0))}</span>
+                       </div>`
                     : `<div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
                         <span class="text-purple-600 font-medium">${escapeHtml(developer.name?.charAt(0))}</span>
                       </div>`

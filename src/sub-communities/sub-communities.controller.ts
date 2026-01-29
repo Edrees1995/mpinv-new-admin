@@ -43,8 +43,20 @@ export class SubCommunitiesController {
 
     const communities = await this.subCommunitiesService.getAllCommunities();
 
-    // Build pagination range
-    const range = this.buildPaginationRange(result.page, result.totalPages);
+    // Generate truncated pagination array
+    const pages: Array<{ number: number; active: boolean; ellipsis?: boolean }> = [];
+    const totalPg = result.totalPages;
+    const current = result.page;
+    if (totalPg <= 7) {
+      for (let i = 1; i <= totalPg; i++) pages.push({ number: i, active: i === current });
+    } else {
+      pages.push({ number: 1, active: current === 1 });
+      if (current > 3) pages.push({ number: 0, active: false, ellipsis: true });
+      const s = Math.max(2, current - 1), e = Math.min(totalPg - 1, current + 1);
+      for (let i = s; i <= e; i++) pages.push({ number: i, active: i === current });
+      if (current < totalPg - 2) pages.push({ number: 0, active: false, ellipsis: true });
+      pages.push({ number: totalPg, active: current === totalPg });
+    }
 
     return {
       title: 'Sub-Communities',
@@ -55,11 +67,11 @@ export class SubCommunitiesController {
         totalPages: result.totalPages,
         total: result.total,
         limit: result.limit,
+        pages,
         hasNext: result.page < result.totalPages,
         hasPrev: result.page > 1,
         nextPage: result.page + 1,
         prevPage: result.page - 1,
-        range,
       },
       filters: {
         search: search || '',
@@ -185,7 +197,19 @@ export class SubCommunitiesController {
       communityIdNum,
     );
 
-    const range = this.buildPaginationRange(result.page, result.totalPages);
+    const pages2: Array<{ number: number; active: boolean; ellipsis?: boolean }> = [];
+    const tp = result.totalPages;
+    const cp = result.page;
+    if (tp <= 7) {
+      for (let i = 1; i <= tp; i++) pages2.push({ number: i, active: i === cp });
+    } else {
+      pages2.push({ number: 1, active: cp === 1 });
+      if (cp > 3) pages2.push({ number: 0, active: false, ellipsis: true });
+      const s = Math.max(2, cp - 1), e = Math.min(tp - 1, cp + 1);
+      for (let i = s; i <= e; i++) pages2.push({ number: i, active: i === cp });
+      if (cp < tp - 2) pages2.push({ number: 0, active: false, ellipsis: true });
+      pages2.push({ number: tp, active: cp === tp });
+    }
 
     return {
       subCommunities: result.data,
@@ -194,11 +218,11 @@ export class SubCommunitiesController {
         totalPages: result.totalPages,
         total: result.total,
         limit: result.limit,
+        pages: pages2,
         hasNext: result.page < result.totalPages,
         hasPrev: result.page > 1,
         nextPage: result.page + 1,
         prevPage: result.page - 1,
-        range,
       },
       filters: {
         search: search || '',
@@ -208,29 +232,4 @@ export class SubCommunitiesController {
     };
   }
 
-  private buildPaginationRange(
-    currentPage: number,
-    totalPages: number,
-  ): Array<{ page?: number; isEllipsis?: boolean; isCurrent?: boolean }> {
-    const range: Array<{
-      page?: number;
-      isEllipsis?: boolean;
-      isCurrent?: boolean;
-    }> = [];
-    const delta = 2;
-
-    for (let i = 1; i <= totalPages; i++) {
-      if (
-        i === 1 ||
-        i === totalPages ||
-        (i >= currentPage - delta && i <= currentPage + delta)
-      ) {
-        range.push({ page: i, isCurrent: i === currentPage });
-      } else if (range.length > 0 && !range[range.length - 1].isEllipsis) {
-        range.push({ isEllipsis: true });
-      }
-    }
-
-    return range;
-  }
 }

@@ -16,14 +16,18 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { extname, join } from 'path';
 import type { Response } from 'express';
 import { ProjectsService } from './projects.service';
 import type { CreateProjectDto, UpdateProjectDto } from './projects.service';
 
 // Configure multer storage for property type images - NEW ADMIN SEPARATE
+const uploadDir = process.env.NODE_ENV === 'production'
+  ? '/var/www/new-admin.mpinv.cloud/public/uploads/ads'
+  : join(process.cwd(), 'public', 'uploads', 'ads');
+
 const propertyTypeStorage = diskStorage({
-  destination: '/var/www/new-admin.mpinv.cloud/public/uploads/ads',
+  destination: uploadDir,
   filename: (req, file, callback) => {
     const uniqueSuffix = Date.now() + '_' + Math.round(Math.random() * 1e9);
     const ext = extname(file.originalname).toLowerCase();
@@ -63,6 +67,35 @@ export class ProjectsController {
     const result = await this.projectsService.findAll(pageNum, 12, search, status, featured);
     const stats = await this.projectsService.getStats();
 
+    // Generate truncated pagination array
+    const pages: Array<{
+      number: number;
+      active: boolean;
+      ellipsis?: boolean;
+    }> = [];
+    const total = result.totalPages;
+    const current = result.page;
+
+    if (total <= 7) {
+      for (let i = 1; i <= total; i++) {
+        pages.push({ number: i, active: i === current });
+      }
+    } else {
+      pages.push({ number: 1, active: current === 1 });
+      if (current > 3) {
+        pages.push({ number: 0, active: false, ellipsis: true });
+      }
+      const start = Math.max(2, current - 1);
+      const end = Math.min(total - 1, current + 1);
+      for (let i = start; i <= end; i++) {
+        pages.push({ number: i, active: i === current });
+      }
+      if (current < total - 2) {
+        pages.push({ number: 0, active: false, ellipsis: true });
+      }
+      pages.push({ number: total, active: current === total });
+    }
+
     return {
       title: 'Offplan Projects',
       projects: result.data,
@@ -71,8 +104,11 @@ export class ProjectsController {
         limit: result.limit,
         total: result.total,
         totalPages: result.totalPages,
+        pages,
         hasNext: result.page < result.totalPages,
         hasPrev: result.page > 1,
+        prevPage: result.page - 1,
+        nextPage: result.page + 1,
       },
       stats,
       filters: {
@@ -89,6 +125,35 @@ export class ProjectsController {
     const pageNum = parseInt(page || '1', 10);
     const result = await this.projectsService.findTrashed(pageNum, 12);
 
+    // Generate truncated pagination array
+    const pages: Array<{
+      number: number;
+      active: boolean;
+      ellipsis?: boolean;
+    }> = [];
+    const totalTr = result.totalPages;
+    const currentTr = result.page;
+
+    if (totalTr <= 7) {
+      for (let i = 1; i <= totalTr; i++) {
+        pages.push({ number: i, active: i === currentTr });
+      }
+    } else {
+      pages.push({ number: 1, active: currentTr === 1 });
+      if (currentTr > 3) {
+        pages.push({ number: 0, active: false, ellipsis: true });
+      }
+      const start = Math.max(2, currentTr - 1);
+      const end = Math.min(totalTr - 1, currentTr + 1);
+      for (let i = start; i <= end; i++) {
+        pages.push({ number: i, active: i === currentTr });
+      }
+      if (currentTr < totalTr - 2) {
+        pages.push({ number: 0, active: false, ellipsis: true });
+      }
+      pages.push({ number: totalTr, active: currentTr === totalTr });
+    }
+
     return {
       title: 'Trashed Projects',
       projects: result.data,
@@ -97,8 +162,11 @@ export class ProjectsController {
         limit: result.limit,
         total: result.total,
         totalPages: result.totalPages,
+        pages,
         hasNext: result.page < result.totalPages,
         hasPrev: result.page > 1,
+        prevPage: result.page - 1,
+        nextPage: result.page + 1,
       },
     };
   }
