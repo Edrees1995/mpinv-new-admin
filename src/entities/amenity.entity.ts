@@ -2,42 +2,34 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('mw_amenities')
 export class Amenity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'amenities_id' })
   id: number;
 
-  @Column({ length: 255 })
+  @Column({ length: 2, nullable: true })
+  code: string;
+
+  @Column({ name: 'amenities_name', length: 250 })
   name: string;
 
-  @Column({ length: 255, nullable: true })
-  slug: string;
+  @Column({ name: 'isTrash', type: 'enum', enum: ['0', '1'], default: '0' })
+  is_trash: string;
 
-  @Column({ length: 255, nullable: true })
-  icon: string;
+  @Column({ type: 'enum', enum: ['A', 'I'], default: 'A' })
+  status: string;
 
-  @Column({ length: 50, nullable: true })
-  icon_type: string; // font-awesome, image, svg
+  @Column({ default: 0 })
+  priority: number;
 
-  @Column({ type: 'text', nullable: true })
-  description: string;
+  @Column({ name: 'Title', length: 250, nullable: true })
+  title: string;
 
-  @Column({ length: 50, nullable: true })
-  category: string; // property, project, both
+  @Column({ nullable: true })
+  f_type: number;
 
-  @Column({ type: 'tinyint', default: 1 })
-  status: number;
-
-  @Column({ type: 'int', default: 0 })
-  sort_order: number;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
+  @Column({ length: 60, nullable: true })
+  icon_list: string;
 }

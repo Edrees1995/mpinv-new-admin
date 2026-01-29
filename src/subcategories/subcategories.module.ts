@@ -1,0 +1,13 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { SubcategoriesController } from './subcategories.controller';
+import { SubcategoriesService } from './subcategories.service';
+import { Subcategory, Category } from '../entities';
+
+@Module({
+  imports: [TypeOrmModule.forFeature([Subcategory, Category])],
+  controllers: [SubcategoriesController],
+  providers: [SubcategoriesService],
+  exports: [SubcategoriesService],
+})
+export class SubcategoriesModule {}

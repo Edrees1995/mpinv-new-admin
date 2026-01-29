@@ -1,0 +1,62 @@
+<!-- Breadcrumb -->
+<nav class="mb-6">
+    <ol class="flex items-center space-x-2 text-sm">
+        <li><a href="/" class="text-gray-500 hover:text-gray-700">Dashboard</a></li>
+        <li><span class="text-gray-400">/</span></li>
+        <li><a href="/amenities" class="text-gray-500 hover:text-gray-700">Amenities</a></li>
+        <li><span class="text-gray-400">/</span></li>
+        <li class="text-gray-900 font-medium">{{amenity.name}}</li>
+    </ol>
+</nav>
+
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">{{amenity.name}}</h1>
+        <p class="text-gray-600">ID: {{amenity.id}}</p>
+    </div>
+    <div class="flex items-center space-x-3 mt-4 sm:mt-0">
+        <a href="/amenities/{{amenity.id}}/edit" class="inline-flex items-center px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">Edit</a>
+        <a href="/amenities" class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Back to List</a>
+    </div>
+</div>
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-100">
+    <div class="p-6 border-b border-gray-100">
+        <h3 class="text-lg font-semibold text-gray-900">Details</h3>
+    </div>
+    <div class="p-6">
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Amenity Name</dt>
+                <dd class="mt-1 text-gray-900">{{amenity.name}}</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Code</dt>
+                <dd class="mt-1 text-gray-900">{{#if amenity.code}}{{amenity.code}}{{else}}<span class="text-gray-400">-</span>{{/if}}</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Icon</dt>
+                <dd class="mt-1 text-gray-900">{{#if amenity.icon_list}}{{amenity.icon_list}}{{else}}<span class="text-gray-400">-</span>{{/if}}</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Priority</dt>
+                <dd class="mt-1 text-gray-900">{{amenity.priority}}</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Status</dt>
+                <dd class="mt-1">
+                    {{#if (eq amenity.status "A")}}<span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Active</span>
+                    {{else}}<span class="px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full">Inactive</span>{{/if}}
+                </dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Title</dt>
+                <dd class="mt-1 text-gray-900">{{#if amenity.title}}{{amenity.title}}{{else}}<span class="text-gray-400">-</span>{{/if}}</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Type (f_type)</dt>
+                <dd class="mt-1 text-gray-900">{{#if amenity.f_type}}{{amenity.f_type}}{{else}}<span class="text-gray-400">-</span>{{/if}}</dd>
+            </div>
+        </dl>
+    </div>
+</div>

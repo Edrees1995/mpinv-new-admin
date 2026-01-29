@@ -295,14 +295,93 @@ export class ProjectsService {
   }
 
   async update(id: number, updateProjectDto: UpdateProjectDto): Promise<OffplanProject> {
-    const project = await this.findOne(id);
+    // Load without transformProject to avoid saving full URLs back to DB
+    const project = await this.projectRepository.findOne({
+      where: { id, section_id: OFFPLAN_SECTION_ID },
+    });
+
+    if (!project) {
+      throw new NotFoundException(`Project with ID ${id} not found`);
+    }
+
+    // Sanitize the DTO: convert empty strings to null for date/number fields
+    const sanitized = this.sanitizeUpdateDto(updateProjectDto);
 
     Object.assign(project, {
-      ...updateProjectDto,
+      ...sanitized,
       updated_at: new Date(),
     });
 
     return this.projectRepository.save(project);
+  }
+
+  private sanitizeUpdateDto(dto: any): any {
+    const result = { ...dto };
+
+    // Date fields: empty string → null
+    const dateFields = ['handover_date', 'launch_date', 'possession', 'completion_date'];
+    for (const field of dateFields) {
+      if (result[field] === '' || result[field] === undefined) {
+        result[field] = null;
+      }
+    }
+
+    // FK fields: empty string → null (allows clearing relationships)
+    const fkFields = [
+      'developer_id', 'community_id', 'sub_community_id',
+      'category_id', 'sub_category_id',
+    ];
+    for (const field of fkFields) {
+      if (result[field] === '' || result[field] === undefined) {
+        result[field] = null;
+      } else if (result[field] !== null) {
+        const parsed = Number(result[field]);
+        result[field] = isNaN(parsed) ? null : parsed;
+      }
+    }
+
+    // Non-nullable number fields: empty string → 0
+    const numericFields = ['price', 'area_unit'];
+    for (const field of numericFields) {
+      if (result[field] === '' || result[field] === undefined) {
+        result[field] = 0;
+      } else if (result[field] !== null) {
+        const parsed = Number(result[field]);
+        result[field] = isNaN(parsed) ? 0 : parsed;
+      }
+    }
+
+    // Strip IMAGE_BASE_URL prefix from image fields so only filenames are stored
+    const imageFields = [
+      'featured_image', 'developer_logo', 'floor_pdf', 'payment_pdf',
+      'brochure', 'bg_img', 'bg_img_mobile', 'd_right',
+      'bg_attachment1', 'bg_attachment2', 'agent_logo', 'qr',
+    ];
+    for (const field of imageFields) {
+      if (result[field] && typeof result[field] === 'string') {
+        if (result[field].startsWith(IMAGE_BASE_URL)) {
+          result[field] = result[field].replace(IMAGE_BASE_URL, '');
+        }
+        // Also strip new admin URL prefix
+        const newAdminUrl = 'https://new-admin.mpinv.cloud/uploads/ads/';
+        if (result[field].startsWith(newAdminUrl)) {
+          result[field] = result[field].replace(newAdminUrl, '');
+        }
+      }
+    }
+
+    // Remove relation objects that shouldn't be saved via Object.assign
+    delete result.developer;
+    delete result.community;
+    delete result.subCommunity;
+    delete result.category;
+    delete result.subcategory;
+    delete result.images;
+    delete result.propertyTypes;
+    delete result.floorPlans;
+    delete result.paymentPlans;
+
+    return result;
   }
 
   async remove(id: number): Promise<void> {

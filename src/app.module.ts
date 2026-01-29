@@ -8,6 +8,9 @@ import { ProjectsModule } from './projects/projects.module';
 import { DevelopersModule } from './developers/developers.module';
 import { CommunitiesModule } from './communities/communities.module';
 import { SubCommunitiesModule } from './sub-communities/sub-communities.module';
+import { CategoriesModule } from './categories/categories.module';
+import { SubcategoriesModule } from './subcategories/subcategories.module';
+import { AmenitiesModule } from './amenities/amenities.module';
 import { ApiModule } from './api/api.module';
 
 @Module({
@@ -37,6 +40,9 @@ import { ApiModule } from './api/api.module';
     DevelopersModule,
     CommunitiesModule,
     SubCommunitiesModule,
+    CategoriesModule,
+    SubcategoriesModule,
+    AmenitiesModule,
     ApiModule,
   ],
 })

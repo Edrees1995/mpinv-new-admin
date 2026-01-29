@@ -1,0 +1,56 @@
+<!-- Breadcrumb -->
+<div class="mb-6">
+    <nav class="flex items-center space-x-2 text-sm">
+        <a href="/subcategories" class="text-gray-500 hover:text-gray-700">Subcategories</a>
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        <a href="/subcategories/{{subcategory.id}}" class="text-gray-500 hover:text-gray-700">{{subcategory.name}}</a>
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        <span class="text-gray-900 font-medium">Edit</span>
+    </nav>
+</div>
+
+<div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">Edit Subcategory</h1>
+    <p class="text-gray-600 mt-1">Update {{subcategory.name}}</p>
+</div>
+
+<form action="/subcategories/{{subcategory.id}}?_method=PUT" method="POST" class="max-w-4xl">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-6 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Subcategory Name *</label>
+                    <input type="text" name="name" value="{{subcategory.name}}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Category *</label>
+                    <select name="category_id" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">Select category</option>
+                        {{#each categories}}
+                        <option value="{{this.id}}" {{#if (eq this.id ../subcategory.category_id)}}selected{{/if}}>{{this.name}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Slug</label>
+                    <input type="text" name="slug" value="{{subcategory.slug}}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+                    <input type="number" name="priority" value="{{subcategory.priority}}" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                    <select name="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="A" {{#if (eq subcategory.status "A")}}selected{{/if}}>Active</option>
+                        <option value="I" {{#if (eq subcategory.status "I")}}selected{{/if}}>Inactive</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="bg-gray-50 px-6 py-4 border-t border-gray-100 flex items-center justify-end space-x-4">
+            <a href="/subcategories/{{subcategory.id}}" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100">Cancel</a>
+            <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Update Subcategory</button>
+        </div>
+    </div>
+</form>
