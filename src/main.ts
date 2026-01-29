@@ -3,6 +3,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import * as hbs from 'hbs';
 import methodOverride from 'method-override';
+import session from 'express-session';
 import type Handlebars from 'handlebars';
 import { AppModule } from './app.module';
 
@@ -11,6 +12,19 @@ async function bootstrap() {
 
   // Enable method override for PUT/DELETE from HTML forms via ?_method=PUT
   app.use(methodOverride('_method'));
+
+  // Session middleware
+  app.use(
+    session({
+      secret: process.env.SESSION_SECRET || 'mpinv-admin-secret-key-2026',
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        httpOnly: true,
+      },
+    }),
+  );
 
   // Enable CORS for frontend
   app.enableCors({

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DashboardModule } from './dashboard/dashboard.module';
@@ -12,6 +12,8 @@ import { CategoriesModule } from './categories/categories.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
 import { AmenitiesModule } from './amenities/amenities.module';
 import { ApiModule } from './api/api.module';
+import { AuthModule } from './auth/auth.module';
+import { AuthMiddleware } from './auth/auth.middleware';
 
 @Module({
   imports: [
@@ -28,12 +30,13 @@ import { ApiModule } from './api/api.module';
         password: configService.get('DB_PASSWORD', ''),
         database: configService.get('DB_DATABASE', 'mpinv_new'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: false, // Set to false in production, we'll use migrations
+        synchronize: false,
         logging: configService.get('NODE_ENV') !== 'production',
       }),
       inject: [ConfigService],
     }),
     DatabaseModule,
+    AuthModule,
     DashboardModule,
     PropertiesModule,
     ProjectsModule,
@@ -46,4 +49,8 @@ import { ApiModule } from './api/api.module';
     ApiModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleware).forRoutes('*');
+  }
+}
