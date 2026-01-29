@@ -20,6 +20,17 @@
                 <input type="text" name="search" value="{{filters.search}}" placeholder="Search articles..."
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
+            <select name="type" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="" {{#unless filters.type}}selected{{/unless}}>Blogs</option>
+                <option value="Re" {{#if (eq filters.type "Re")}}selected{{/if}}>Reviews</option>
+                <option value="Fq" {{#if (eq filters.type "Fq")}}selected{{/if}}>FAQs</option>
+                <option value="Te" {{#if (eq filters.type "Te")}}selected{{/if}}>Team</option>
+                <option value="Pa" {{#if (eq filters.type "Pa")}}selected{{/if}}>Partners</option>
+                <option value="Aa" {{#if (eq filters.type "Aa")}}selected{{/if}}>About</option>
+                <option value="Os" {{#if (eq filters.type "Os")}}selected{{/if}}>Services</option>
+                <option value="Aw" {{#if (eq filters.type "Aw")}}selected{{/if}}>Awards</option>
+                <option value="all" {{#if (eq filters.type "all")}}selected{{/if}}>All Types</option>
+            </select>
             <select name="status" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 <option value="">All Status</option>
                 <option value="published" {{#if (eq filters.status "published")}}selected{{/if}}>Published</option>
@@ -131,7 +142,7 @@
             </p>
             <div class="flex items-center space-x-2">
                 {{#if pagination.hasPrev}}
-                <a href="/articles?page={{pagination.prevPage}}{{#if filters.search}}&search={{filters.search}}{{/if}}{{#if filters.status}}&status={{filters.status}}{{/if}}"
+                <a href="/articles?page={{pagination.prevPage}}{{#if filters.search}}&search={{filters.search}}{{/if}}{{#if filters.status}}&status={{filters.status}}{{/if}}{{#if filters.type}}&type={{filters.type}}{{/if}}"
                    class="px-3 py-2 text-sm text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Previous</a>
                 {{/if}}
                 {{#each pagination.pages}}
@@ -143,7 +154,7 @@
                 {{/if}}
                 {{/each}}
                 {{#if pagination.hasNext}}
-                <a href="/articles?page={{pagination.nextPage}}{{#if filters.search}}&search={{filters.search}}{{/if}}{{#if filters.status}}&status={{filters.status}}{{/if}}"
+                <a href="/articles?page={{pagination.nextPage}}{{#if filters.search}}&search={{filters.search}}{{/if}}{{#if filters.status}}&status={{filters.status}}{{/if}}{{#if filters.type}}&type={{filters.type}}{{/if}}"
                    class="px-3 py-2 text-sm text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Next</a>
                 {{/if}}
             </div>

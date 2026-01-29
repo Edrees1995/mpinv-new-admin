@@ -31,18 +31,23 @@ export class ArticlesService {
 
     const queryBuilder = this.articleRepository.createQueryBuilder('article');
 
+    // Default: show only blogs (f_type IS NULL) unless a specific type is requested
+    if (type === 'all') {
+      // show everything
+    } else if (type) {
+      queryBuilder.where('article.f_type = :type', { type });
+    } else {
+      queryBuilder.where('article.f_type IS NULL');
+    }
+
     if (search) {
-      queryBuilder.where('article.title LIKE :search', {
+      queryBuilder.andWhere('article.title LIKE :search', {
         search: `%${search}%`,
       });
     }
 
     if (status) {
       queryBuilder.andWhere('article.status = :status', { status });
-    }
-
-    if (type) {
-      queryBuilder.andWhere('article.f_type = :type', { type });
     }
 
     queryBuilder
