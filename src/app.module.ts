@@ -11,6 +11,7 @@ import { SubCommunitiesModule } from './sub-communities/sub-communities.module';
 import { CategoriesModule } from './categories/categories.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
 import { AmenitiesModule } from './amenities/amenities.module';
+import { ArticlesModule } from './articles/articles.module';
 import { ApiModule } from './api/api.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthMiddleware } from './auth/auth.middleware';
@@ -46,6 +47,7 @@ import { AuthMiddleware } from './auth/auth.middleware';
     CategoriesModule,
     SubcategoriesModule,
     AmenitiesModule,
+    ArticlesModule,
     ApiModule,
   ],
 })

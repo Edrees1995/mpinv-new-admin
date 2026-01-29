@@ -1,0 +1,127 @@
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+    <div>
+        <a href="/articles" class="text-blue-600 hover:underline text-sm">&larr; Back to Articles</a>
+        <h1 class="text-2xl font-bold text-gray-900 mt-1">{{article.title}}</h1>
+    </div>
+    <div class="flex items-center space-x-3 mt-4 sm:mt-0">
+        <a href="/articles/{{article.id}}/edit" class="inline-flex items-center px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            Edit
+        </a>
+        <button hx-delete="/articles/{{article.id}}?_method=DELETE" hx-confirm="Are you sure you want to delete this article?"
+            class="inline-flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+            Delete
+        </button>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Content -->
+    <div class="lg:col-span-2 space-y-6">
+        {{#if article.banner}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <img src="{{article.banner}}" alt="{{article.title}}" class="w-full h-64 object-cover">
+        </div>
+        {{/if}}
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Content</h2>
+            <div class="prose max-w-none text-gray-700">
+                {{{article.content}}}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+        <!-- Details -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Details</h2>
+            <dl class="space-y-3">
+                <div>
+                    <dt class="text-xs font-medium text-gray-500 uppercase">Status</dt>
+                    <dd class="mt-1">
+                        {{#if (eq article.status "published")}}
+                        <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Published</span>
+                        {{else}}
+                        <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs font-medium rounded-full">{{article.status}}</span>
+                        {{/if}}
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-xs font-medium text-gray-500 uppercase">Slug</dt>
+                    <dd class="mt-1 text-sm text-gray-700">{{article.slug}}</dd>
+                </div>
+                {{#if article.type}}
+                <div>
+                    <dt class="text-xs font-medium text-gray-500 uppercase">Type</dt>
+                    <dd class="mt-1 text-sm text-gray-700">{{article.type}}</dd>
+                </div>
+                {{/if}}
+                {{#if article.subtitle}}
+                <div>
+                    <dt class="text-xs font-medium text-gray-500 uppercase">Subtitle</dt>
+                    <dd class="mt-1 text-sm text-gray-700">{{article.subtitle}}</dd>
+                </div>
+                {{/if}}
+                {{#if article.reading_time}}
+                <div>
+                    <dt class="text-xs font-medium text-gray-500 uppercase">Reading Time</dt>
+                    <dd class="mt-1 text-sm text-gray-700">{{article.reading_time}}</dd>
+                </div>
+                {{/if}}
+                {{#if article.youtube_url}}
+                <div>
+                    <dt class="text-xs font-medium text-gray-500 uppercase">YouTube</dt>
+                    <dd class="mt-1 text-sm text-blue-600 break-all">{{article.youtube_url}}</dd>
+                </div>
+                {{/if}}
+                <div>
+                    <dt class="text-xs font-medium text-gray-500 uppercase">Created</dt>
+                    <dd class="mt-1 text-sm text-gray-700">{{formatDateTime article.date_added}}</dd>
+                </div>
+                <div>
+                    <dt class="text-xs font-medium text-gray-500 uppercase">Last Updated</dt>
+                    <dd class="mt-1 text-sm text-gray-700">{{formatDateTime article.last_updated}}</dd>
+                </div>
+            </dl>
+        </div>
+
+        <!-- SEO -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">SEO</h2>
+            <dl class="space-y-3">
+                {{#if article.page_title}}
+                <div>
+                    <dt class="text-xs font-medium text-gray-500 uppercase">Page Title</dt>
+                    <dd class="mt-1 text-sm text-gray-700">{{article.page_title}}</dd>
+                </div>
+                {{/if}}
+                {{#if article.meta_title}}
+                <div>
+                    <dt class="text-xs font-medium text-gray-500 uppercase">Meta Title</dt>
+                    <dd class="mt-1 text-sm text-gray-700">{{article.meta_title}}</dd>
+                </div>
+                {{/if}}
+                {{#if article.meta_description}}
+                <div>
+                    <dt class="text-xs font-medium text-gray-500 uppercase">Meta Description</dt>
+                    <dd class="mt-1 text-sm text-gray-700">{{article.meta_description}}</dd>
+                </div>
+                {{/if}}
+                {{#if article.meta_keywords}}
+                <div>
+                    <dt class="text-xs font-medium text-gray-500 uppercase">Meta Keywords</dt>
+                    <dd class="mt-1 text-sm text-gray-700">{{article.meta_keywords}}</dd>
+                </div>
+                {{/if}}
+            </dl>
+        </div>
+    </div>
+</div>
