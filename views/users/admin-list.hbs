@@ -1,0 +1,141 @@
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">Admin Users</h1>
+        <p class="text-gray-600 mt-1">Manage admin panel login accounts</p>
+    </div>
+    <a href="/users/create" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        Add Admin
+    </a>
+</div>
+
+<!-- Users Table -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div>
+        <table class="w-full">
+            <thead class="bg-gray-50 border-b border-gray-100">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Removable</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last Updated</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {{#each users}}
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                <span class="text-blue-600 font-semibold text-sm">{{substring this.first_name 0 1}}{{substring this.last_name 0 1}}</span>
+                            </div>
+                            <div>
+                                <a href="/users/{{this.id}}" class="font-medium text-gray-900 hover:text-blue-600">{{this.first_name}} {{this.last_name}}</a>
+                                <p class="text-xs text-gray-500">ID: {{this.id}}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-600">{{this.email}}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {{#if (eq this.status "active")}}
+                        <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Active</span>
+                        {{else}}
+                        <span class="px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full">{{this.status}}</span>
+                        {{/if}}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {{#if (eq this.removable "no")}}
+                        <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">Protected</span>
+                        {{else}}
+                        <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs font-medium rounded-full">Removable</span>
+                        {{/if}}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{formatDateTime this.last_updated}}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div class="flex items-center justify-end space-x-2">
+                            <a href="/users/{{this.id}}" class="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg" title="View">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </a>
+                            <a href="/users/{{this.id}}/edit" class="p-2 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg" title="Edit">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </a>
+                            {{#if (eq this.removable "yes")}}
+                            <button onclick="deleteUser({{this.id}}, '{{this.first_name}} {{this.last_name}}')"
+                                class="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                            {{/if}}
+                        </div>
+                    </td>
+                </tr>
+                {{else}}
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                        <p class="text-lg font-medium">No admin users found</p>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div id="delete-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
+        <div class="flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mx-auto mb-4">
+            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 text-center mb-2">Delete Admin User</h3>
+        <p class="text-gray-600 text-center mb-6">Are you sure you want to delete "<span id="delete-user-name" class="font-medium"></span>"? This action cannot be undone.</p>
+        <div class="flex space-x-4">
+            <button onclick="closeDeleteModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                Cancel
+            </button>
+            <form id="delete-form" method="POST" class="flex-1">
+                <input type="hidden" name="_method" value="DELETE">
+                <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                    Delete
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function deleteUser(id, name) {
+        document.getElementById('delete-user-name').textContent = name;
+        document.getElementById('delete-form').action = '/users/' + id + '?_method=DELETE';
+        document.getElementById('delete-modal').classList.remove('hidden');
+        document.getElementById('delete-modal').classList.add('flex');
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('delete-modal').classList.add('hidden');
+        document.getElementById('delete-modal').classList.remove('flex');
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeDeleteModal();
+    });
+
+    document.getElementById('delete-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeDeleteModal();
+    });
+</script>

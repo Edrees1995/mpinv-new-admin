@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import * as hbs from 'hbs';
+import express from 'express';
 import methodOverride from 'method-override';
 import session from 'express-session';
 import type Handlebars from 'handlebars';
@@ -10,8 +11,20 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // Enable method override for PUT/DELETE from HTML forms via ?_method=PUT
-  app.use(methodOverride('_method'));
+  // Parse URL-encoded form bodies before method-override
+  app.use(express.urlencoded({ extended: true }));
+
+  // Enable method override for PUT/DELETE from HTML forms
+  app.use(methodOverride(function (req) {
+    if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+      const method = req.body._method;
+      delete req.body._method;
+      return method;
+    }
+    if (req.query && '_method' in req.query) {
+      return req.query._method as string;
+    }
+  }));
 
   // Session middleware
   app.use(
@@ -134,6 +147,16 @@ async function bootstrap() {
   handlebars.registerHelper('formatNumber', function (num: number) {
     if (num === null || num === undefined) return '0';
     return num.toLocaleString();
+  });
+
+  handlebars.registerHelper('stripTags', function (str: string) {
+    if (!str) return '';
+    return str.replace(/<[^>]*>/g, '');
+  });
+
+  handlebars.registerHelper('len', function (str: string) {
+    if (!str) return 0;
+    return str.length;
   });
 
   handlebars.registerHelper('truncate', function (str: string, len: number) {

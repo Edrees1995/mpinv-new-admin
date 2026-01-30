@@ -103,7 +103,7 @@
             <span class="px-3 py-2 text-sm text-gray-400">...</span>
             {{else}}
             <a href="/sub-communities?page={{this.page}}{{#if ../filters.search}}&search={{../filters.search}}{{/if}}{{#if ../filters.community_id}}&community_id={{../filters.community_id}}{{/if}}"
-               class="px-3 py-2 text-sm {{#if this.isCurrent}}bg-teal-600 text-white{{else}}text-gray-600 bg-white border border-gray-300 hover:bg-gray-50{{/if}} rounded-lg">{{this.page}}</a>
+               class="px-3 py-2 text-sm {{#if this.isCurrent}}bg-purple-600 text-white{{else}}text-gray-600 bg-white border border-gray-300 hover:bg-gray-50{{/if}} rounded-lg">{{this.page}}</a>
             {{/if}}
             {{/each}}
             {{#if pagination.hasNext}}

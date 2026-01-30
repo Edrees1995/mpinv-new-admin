@@ -116,7 +116,7 @@
                 {{#each (range 1 pagination.totalPages)}}
                 <a
                     href="/projects/trashed?page={{this}}"
-                    class="px-3 py-2 text-sm font-medium {{#if (eq this ../pagination.page)}}bg-green-600 text-white{{else}}text-gray-700 bg-white hover:bg-gray-50{{/if}} border border-gray-300 rounded-lg"
+                    class="px-3 py-2 text-sm font-medium {{#if (eq this ../pagination.page)}}bg-purple-600 text-white{{else}}text-gray-700 bg-white hover:bg-gray-50{{/if}} border border-gray-300 rounded-lg"
                 >
                     {{this}}
                 </a>

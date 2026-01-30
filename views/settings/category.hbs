@@ -1,0 +1,207 @@
+<!-- Breadcrumb -->
+<nav class="mb-6">
+    <ol class="flex items-center space-x-2 text-sm">
+        <li><a href="/" class="text-gray-500 hover:text-gray-700">Dashboard</a></li>
+        <li class="text-gray-400">/</li>
+        <li><a href="/settings" class="text-gray-500 hover:text-gray-700">Settings</a></li>
+        <li class="text-gray-400">/</li>
+        <li class="text-gray-900 font-medium truncate max-w-xs">{{categoryLabel}}</li>
+    </ol>
+</nav>
+
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">{{categoryLabel}}</h1>
+        <p class="text-gray-600 mt-1">
+            <span class="font-mono text-xs text-gray-400">{{category}}</span>
+            <span class="mx-2 text-gray-300">|</span>
+            {{totalSettings}} settings
+        </p>
+    </div>
+    <div class="flex items-center space-x-3 mt-4 sm:mt-0">
+        <button onclick="toggleAddForm()" class="inline-flex items-center px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Add Setting
+        </button>
+    </div>
+</div>
+
+<!-- Add Setting Form (hidden by default) -->
+<div id="add-form" class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6 hidden">
+    <div class="p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Add New Setting</h2>
+        <form action="/settings/create" method="POST" class="flex flex-col sm:flex-row gap-4">
+            <input type="hidden" name="category" value="{{category}}">
+            <div class="flex-1">
+                <label class="block text-xs font-medium text-gray-500 mb-1">Key</label>
+                <input type="text" name="key" required placeholder="setting_key"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm">
+            </div>
+            <div class="flex-[2]">
+                <label class="block text-xs font-medium text-gray-500 mb-1">Value</label>
+                <input type="text" name="value" placeholder="Setting value"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+            </div>
+            <div class="flex items-end space-x-2">
+                <button type="submit" class="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors">Save</button>
+                <button type="button" onclick="toggleAddForm()" class="px-4 py-2 text-gray-600 hover:text-gray-900">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Search -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
+    <div class="p-4">
+        <form action="/settings/category" method="GET" class="flex gap-4">
+            <input type="hidden" name="name" value="{{category}}">
+            <div class="flex-1">
+                <input type="text" name="search" value="{{filters.search}}" placeholder="Search by key name..."
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm">
+            </div>
+            <button type="submit" class="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors">Search</button>
+            {{#if filters.search}}
+            <a href="/settings/category?name={{category}}" class="px-4 py-2 text-gray-600 hover:text-gray-900">Clear</a>
+            {{/if}}
+        </form>
+    </div>
+</div>
+
+<!-- Settings Table -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div>
+        <table class="w-full table-fixed">
+            <thead class="bg-gray-50 border-b border-gray-100">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-1/4">Key</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Value</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase w-24">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {{#each settings}}
+                <tr class="hover:bg-gray-50 transition-colors" id="row-{{@index}}">
+                    <td class="px-6 py-4">
+                        <code class="text-sm text-gray-800 bg-gray-50 px-2 py-0.5 rounded font-mono break-all">{{this.key}}</code>
+                        {{#if this.isSerialized}}
+                        <span class="ml-2 px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-medium rounded">SERIALIZED</span>
+                        {{/if}}
+                    </td>
+                    <td class="px-6 py-4">
+                        <!-- Display mode -->
+                        <div id="display-{{@index}}">
+                            {{#if this.isSerialized}}
+                            <pre class="text-xs text-gray-500 bg-gray-50 p-2 rounded overflow-x-auto max-h-20 font-mono">{{truncate this.value 300}}</pre>
+                            <p class="text-[10px] text-amber-600 mt-1">Serialized PHP data — edit with caution</p>
+                            {{else}}
+                            {{#if this.value}}
+                            <p class="text-sm text-gray-700 break-all line-clamp-3">{{this.value}}</p>
+                            {{else}}
+                            <span class="text-xs text-gray-400 italic">Empty</span>
+                            {{/if}}
+                            {{/if}}
+                        </div>
+                        <!-- Edit mode (hidden) -->
+                        <div id="edit-{{@index}}" class="hidden">
+                            <form action="/settings/update" method="POST" class="flex gap-2">
+                                <input type="hidden" name="category" value="{{../category}}">
+                                <input type="hidden" name="key" value="{{this.key}}">
+                                {{#if (gt (len this.value) 100)}}
+                                <textarea name="value" rows="3"
+                                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-mono">{{this.value}}</textarea>
+                                {{else}}
+                                <input type="text" name="value" value="{{this.value}}"
+                                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-mono">
+                                {{/if}}
+                                <div class="flex flex-col gap-1">
+                                    <button type="submit" class="px-3 py-1.5 bg-gray-800 text-white rounded-lg hover:bg-gray-700 text-xs">Save</button>
+                                    <button type="button" onclick="cancelEdit({{@index}})" class="px-3 py-1.5 text-gray-600 hover:text-gray-900 text-xs">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div class="flex items-center justify-end space-x-1">
+                            <button onclick="startEdit({{@index}})"
+                                class="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg" title="Edit">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </button>
+                            <button onclick="deleteSetting('{{this.key}}')"
+                                class="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {{else}}
+                <tr>
+                    <td colspan="3" class="px-6 py-12 text-center text-gray-500">
+                        <svg class="w-12 h-12 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        <p class="text-lg font-medium">No settings found</p>
+                        <p class="text-sm">{{#if filters.search}}Try a different search{{else}}This category is empty{{/if}}</p>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div id="delete-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
+        <div class="flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mx-auto mb-4">
+            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 text-center mb-2">Delete Setting</h3>
+        <p class="text-gray-600 text-center mb-6">Are you sure you want to delete "<span id="delete-key-name" class="font-medium font-mono"></span>"? This action cannot be undone.</p>
+        <div class="flex space-x-4">
+            <button onclick="closeDeleteModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">Cancel</button>
+            <form id="delete-form" method="POST" class="flex-1">
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="hidden" name="category" value="{{category}}">
+                <input type="hidden" id="delete-key-input" name="key" value="">
+                <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleAddForm() {
+        document.getElementById('add-form').classList.toggle('hidden');
+    }
+    function startEdit(index) {
+        document.getElementById('display-' + index).classList.add('hidden');
+        document.getElementById('edit-' + index).classList.remove('hidden');
+    }
+    function cancelEdit(index) {
+        document.getElementById('display-' + index).classList.remove('hidden');
+        document.getElementById('edit-' + index).classList.add('hidden');
+    }
+    function deleteSetting(key) {
+        document.getElementById('delete-key-name').textContent = key;
+        document.getElementById('delete-key-input').value = key;
+        document.getElementById('delete-form').action = '/settings/delete?_method=DELETE';
+        document.getElementById('delete-modal').classList.remove('hidden');
+        document.getElementById('delete-modal').classList.add('flex');
+    }
+    function closeDeleteModal() {
+        document.getElementById('delete-modal').classList.add('hidden');
+        document.getElementById('delete-modal').classList.remove('flex');
+    }
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeDeleteModal(); });
+    document.getElementById('delete-modal').addEventListener('click', function(e) { if (e.target === this) closeDeleteModal(); });
+</script>

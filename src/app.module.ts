@@ -12,6 +12,12 @@ import { CategoriesModule } from './categories/categories.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
 import { AmenitiesModule } from './amenities/amenities.module';
 import { ArticlesModule } from './articles/articles.module';
+import { BannersModule } from './banners/banners.module';
+import { FaqsModule } from './faqs/faqs.module';
+import { TeamsModule } from './teams/teams.module';
+import { UsersModule } from './users/users.module';
+import { ContactsModule } from './contacts/contacts.module';
+import { SettingsModule } from './settings/settings.module';
 import { ApiModule } from './api/api.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthMiddleware } from './auth/auth.middleware';
@@ -48,6 +54,12 @@ import { AuthMiddleware } from './auth/auth.middleware';
     SubcategoriesModule,
     AmenitiesModule,
     ArticlesModule,
+    BannersModule,
+    FaqsModule,
+    TeamsModule,
+    UsersModule,
+    ContactsModule,
+    SettingsModule,
     ApiModule,
   ],
 })
